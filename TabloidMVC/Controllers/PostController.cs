@@ -37,17 +37,22 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Details(int id)
         {
+            int userId = GetCurrentUserProfileId();
+            
+
             var post = _postRepository.GetPublishedPostById(id);
             if (post == null)
             {
-                int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
                 if (post == null)
                 {
                     return NotFound();
                 }
             }
-            return View(post);
+
+            PostDetailViewModel vm = new PostDetailViewModel { Post = post, CurrentUserId = userId };
+
+            return View(vm);
         }
 
         public IActionResult Create()
