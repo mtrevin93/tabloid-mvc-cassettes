@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using TabloidMVC.Repositories;
+using TabloidMVC.Models;
 
 namespace TabloidMVC.Controllers
 {
@@ -15,10 +16,31 @@ namespace TabloidMVC.Controllers
         {
             _tagRepo = tagRepository;
         }
-        public IActionResult Index()
+        public ActionResult Index()
         {
-            var tags = _tagRepo.GetAllTags();
+            List<Tag> tags = _tagRepo.GetAllTags();
             return View(tags);
+        }
+
+        public ActionResult Create()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Create(Tag newTag)
+        {
+            try
+            {
+                _tagRepo.AddTag(newTag);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(newTag);
+            }
         }
     }
 }
