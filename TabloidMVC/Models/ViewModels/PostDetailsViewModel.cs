@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TabloidMVC.Models.ViewModels
 {
-    public class PostDetailViewModel
+    public class PostDetailsViewModel
     {
         public Post Post { get; set; }
         public int CurrentUserId { get; set; }
