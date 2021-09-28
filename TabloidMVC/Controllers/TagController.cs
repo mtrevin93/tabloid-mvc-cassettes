@@ -53,24 +53,39 @@ namespace TabloidMVC.Controllers
             }
         }
 
-        public ActionResult Delete()
-        {
-            return View("Index");
-        }
-
-        [HttpDelete]
-        [ValidateAntiForgeryToken]
         public ActionResult Delete(Tag tag)
         {
             try
             {
-                _tagRepo.DeleteTag(tag);
+                _tagRepo.DeleteTag(tag.Id);
 
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
                 return View("Index");
+            }
+        }
+
+        public ActionResult Edit(int id)
+        {
+            Tag tag = _tagRepo.GetTagById(id);
+
+            return View(tag);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, Tag tag)
+        {
+            try
+            {
+                _tagRepo.UpdateTag(tag);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(tag);
             }
         }
     }
