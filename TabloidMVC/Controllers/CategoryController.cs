@@ -9,6 +9,7 @@ using TabloidMVC.Models;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 
+
 namespace TabloidMVC.Controllers
 {
     public class CategoryController : Controller
@@ -34,7 +35,7 @@ namespace TabloidMVC.Controllers
             return View();
         }
 
-        // GET: CategoryController/Create
+        // GET: Category/Create
         public ActionResult Create()
         {
             return View();
@@ -43,15 +44,26 @@ namespace TabloidMVC.Controllers
         // POST: CategoryController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public ActionResult Create(Category category)
         {
-            try
+            List<Category> categories = _catRepo.GetAll();
+            if (categories.Any(c => c.Name == category.Name))
             {
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Category already exists.");
+                return View(category);
             }
-            catch
+            else
             {
-                return View();
+                try
+                {
+                    _catRepo.AddCategory(category);
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    return View(category);
+                }
             }
         }
 
