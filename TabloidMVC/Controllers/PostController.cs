@@ -105,22 +105,25 @@ namespace TabloidMVC.Controllers
         public IActionResult Edit(int id)
         {
             var post = _postRepository.GetPublishedPostById(id);
+
+            //Dependency - categorybyID from categoryrepo
+            //post.Category = _categoryRepository.GetById(post.CategoryId);
                 
             return View(post);
         }
         [HttpPost]
         public IActionResult Edit(Post post)
         {
-            try
-            {
+            //try
+            //{
                 _postRepository.Update(post);
 
                 return RedirectToAction("Index");
-            }
-            catch (Exception ex)
-            {
-                return View(post);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return View(post);
+            //}
         }
 
         private int GetCurrentUserProfileId()
