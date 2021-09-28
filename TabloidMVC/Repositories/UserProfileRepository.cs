@@ -1,6 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using TabloidMVC.Models;
 using TabloidMVC.Utils;
+using Microsoft.Data.SqlClient;
 
 namespace TabloidMVC.Repositories
 {
@@ -10,10 +12,10 @@ namespace TabloidMVC.Repositories
 
         public UserProfile GetByEmail(string email)
         {
-            using (var conn = Connection)
+            using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using (var cmd = conn.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
                        SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
@@ -25,7 +27,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@email", email);
 
                     UserProfile userProfile = null;
-                    var reader = cmd.ExecuteReader();
+                     SqlDataReader reader = cmd.ExecuteReader();
 
                     if (reader.Read())
                     {
@@ -53,5 +55,51 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        public List<UserProfile> GetAllUsers()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                List<UserProfile> users = new List<UserProfile>();
+                conn.Open();
+                using(SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                                SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
+                                    u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                                    ut.[Name] AS UserTypeName
+                                FROM UserProfile u
+                                LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                                ORDER BY DisplayName
+                                ";
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            UserProfile userProfile = new UserProfile
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                                ImageLocation = DbUtils.GetNullableString(reader, "ImageLocation"),
+                                UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                UserType = new UserType()
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                    Name = reader.GetString(reader.GetOrdinal("UserTypeName"))
+                                }
+                            };
+                            users.Add(userProfile);
+                        }
+                    }
+                    return users;
+                }
+            }
+        }
+    
+    
+    
     }
 }
