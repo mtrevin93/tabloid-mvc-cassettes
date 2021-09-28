@@ -85,7 +85,7 @@ namespace TabloidMVC.Controllers
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
             } 
-            catch
+            catch(Exception ex)
             {
                 vm.CategoryOptions = _categoryRepository.GetAll();
                 return View(vm);
@@ -95,12 +95,27 @@ namespace TabloidMVC.Controllers
         {
             Comment comment = new Comment
             {
-                PostId = postId,
-                Author = new UserProfile { Id = GetCurrentUserProfileId() },
-                CreateDateTime = DateAndTime.Now
+                PostId = postId
             };
 
             return View(comment);
+        }
+        [HttpPost]
+        public IActionResult CreateComment(Comment comment)
+        {
+            try
+            {
+                comment.Author = new UserProfile { Id = GetCurrentUserProfileId() };
+                comment.CreateDateTime = DateAndTime.Now;
+
+                _postRepository.AddComment(comment);
+
+                return RedirectToAction("Details", new { id = comment.PostId });
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Edit", new { id = comment.PostId });
+            }
         }
 
         public IActionResult Delete(Post post)
