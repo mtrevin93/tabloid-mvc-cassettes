@@ -304,6 +304,7 @@ namespace TabloidMVC.Repositories
                               c.[Name] AS CategoryName,
                               u.FirstName, u.LastName, u.DisplayName,
                               up.DisplayName AS CommentAuthor,
+                              up.Id AS AuthorId,
                               u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
                               u.UserTypeId, 
                               ut.[Name] AS UserTypeName,
@@ -337,7 +338,11 @@ namespace TabloidMVC.Repositories
                             Content = reader.GetString(reader.GetOrdinal("Content")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
-                            Author = new UserProfile { DisplayName = reader.GetString(reader.GetOrdinal("CommentAuthor")) }
+                            Author = new UserProfile 
+                            { 
+                                Id = reader.GetInt32(reader.GetOrdinal("AuthorId")),
+                                DisplayName = reader.GetString(reader.GetOrdinal("CommentAuthor")) 
+                            }
                         };
                         post.Comments.Add(comment);
                     }

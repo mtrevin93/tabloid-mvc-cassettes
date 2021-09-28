@@ -1,31 +1,31 @@
-﻿@model TabloidMVC.Models.Post
+﻿@model TabloidMVC.Models.ViewModels.PostDetailsViewModel
 
 @{
     ViewData["Title"] = "Comments";
 }
 
-<h1>@Model.Title Comments </h1>
+<h1>@Model.Post.Title Comments </h1>
 
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Comment.Subject)
+                @Html.DisplayNameFor(model => model.Post.Comment.Subject)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Comment.Content)
+                @Html.DisplayNameFor(model => model.Post.Comment.Content)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Comment.CreateDateTime)
+                @Html.DisplayNameFor(model => model.Post.Comment.CreateDateTime)
             </th>
             <th>
-                By
+                Author
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model.Comments)
+        @foreach (var item in Model.Post.Comments)
         {
             <tr>
                 <td>
@@ -41,12 +41,21 @@
                     @Html.DisplayFor(modelItem => item.Author.DisplayName)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                    @*Check for whether user has delete permissions(post was made by current user)*@
+                    @if (item.Author.Id == Model.CurrentUserId)
+                    {
+                        <a asp-action="EditComment" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                            <i class="fas fa-pencil-alt"></i>
+                        </a>
+                        <a asp-action="DeleteComment" asp-route-id="@Model.Post.Id"
+                           class="btn btn-outline-primary mx-1" title="Delete" onclick="return confirm(`Are you sure you want to delete this post?`);">
+                            <i class="fas fa-trash"></i>
+                        </a>
+                    }
                 </td>
             </tr>
         }
     </tbody>
 </table>
 
-@Html.ActionLink("Back To Post", "Details", new { id=Model.Id })
+@Html.ActionLink("Back To Post", "Details", new { id=Model.Post.Id })

@@ -122,7 +122,9 @@ namespace TabloidMVC.Controllers
             //Replace post from details page with post with comments attached
             Post post = _postRepository.GetPostWithComments(id);
 
-            return View(post);
+            var vm = new PostDetailsViewModel { Post = post, CurrentUserId = GetCurrentUserProfileId() };
+
+            return View(vm);
         }
 
         public IActionResult Delete(Post post)
