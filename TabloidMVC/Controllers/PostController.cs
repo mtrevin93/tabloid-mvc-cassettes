@@ -91,6 +91,12 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
+        public IActionResult CreateComment(int postId)
+        {
+            Comment comment = new Comment { PostId = postId, Author = new UserProfile { Id = GetCurrentUserProfileId() } };
+
+            return View(comment);
+        }
 
         public IActionResult Delete(Post post)
         {

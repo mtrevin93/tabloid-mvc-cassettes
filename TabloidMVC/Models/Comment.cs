@@ -17,6 +17,7 @@ namespace TabloidMVC.Models
         [DataType(DataType.Date)]
         public DateTime CreateDateTime { get; set; }
         public UserProfile Author { get; set; }
+        public int PostId { get; set; }
 
     }
 }
