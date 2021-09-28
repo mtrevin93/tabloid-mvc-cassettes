@@ -24,6 +24,7 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
+            //Use postlistviewmodel to pass current user's id
             var vm = new PostListViewModel() { UserId = GetCurrentUserProfileId() };
 
             vm.Posts = _postRepository.GetAllPublishedPosts();
@@ -33,6 +34,7 @@ namespace TabloidMVC.Controllers
 
         public IActionResult MyIndex()
         {
+            //Use postlistviewmodel to pass current user's id
             int userId = GetCurrentUserProfileId();
 
             var myPosts = _postRepository.GetMyPosts(userId);
@@ -46,7 +48,7 @@ namespace TabloidMVC.Controllers
         {
             int userId = GetCurrentUserProfileId();
             
-
+            //Gets published or unpublished post by user
             var post = _postRepository.GetPublishedPostById(id);
             if (post == null)
             {
@@ -56,6 +58,7 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
+            //Use postdetails view model to pass current user id
 
             PostDetailsViewModel vm = new PostDetailsViewModel { Post = post, CurrentUserId = userId };
 
@@ -99,7 +102,7 @@ namespace TabloidMVC.Controllers
             }
             catch (Exception ex)
             {
-                return View(post);
+                return RedirectToAction("Details", new { id = post.Id });
             }
         }
         public IActionResult Edit(int id)
@@ -114,17 +117,17 @@ namespace TabloidMVC.Controllers
         [HttpPost]
         public IActionResult Edit(Post post)
         {
-            //try
-            //{
+            try
+            {
                 _postRepository.Update(post);
 
-                return RedirectToAction("Index");
-            //}
-            //catch (Exception ex)
-            //{
-            //    return View(post);
-            //}
+                return RedirectToAction("Details", new { id = post.Id } );
         }
+            catch (Exception ex)
+            {
+                return View(post);
+    }
+}
 
         private int GetCurrentUserProfileId()
         {
