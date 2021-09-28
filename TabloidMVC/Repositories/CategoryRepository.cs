@@ -18,6 +18,7 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"SELECT id, name
                         FROM Category
+                        WHERE IsDeleted = 0
                         ORDER BY name
                         ";
                     var reader = cmd.ExecuteReader();
@@ -84,12 +85,13 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                    INSERT INTO Category([Name])
+                    INSERT INTO Category([Name], IsDeleted)
                     OUTPUT INSERTED.ID
-                    VALUES ( @name );
+                    VALUES ( @name, @IsDeleted );
                     ";
 
                     cmd.Parameters.AddWithValue("@name", category.Name);
+                    cmd.Parameters.AddWithValue("@IsDeleted", 0);
 
                     category.Id = (int)cmd.ExecuteScalar();
 
@@ -126,7 +128,8 @@ namespace TabloidMVC.Repositories
                 using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
-                        DELETE from Category
+                        Update Category
+                        SET [IsDeleted] = 1
                         WHERE Id = @id
                         ";
                     cmd.Parameters.AddWithValue("@id", category.Id);

@@ -47,7 +47,7 @@ namespace TabloidMVC.Controllers
         public ActionResult Create(Category category)
         {
             List<Category> categories = _categoryRepository.GetAll();
-            if (categories.Any(c => c.Name == category.Name && c.isDeleted == true))
+            if (categories.Any(c => c.Name == category.Name))
             {
                 ModelState.AddModelError("", "Category already exists.");
                 return View(category);
