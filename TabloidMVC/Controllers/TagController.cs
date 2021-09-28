@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
+using System.Security.Claims;
 
 namespace TabloidMVC.Controllers
 {
@@ -19,7 +20,7 @@ namespace TabloidMVC.Controllers
         public ActionResult Index()
         {
             List<Tag> tags = _tagRepo.GetAllTags();
-            return View(tags);
+            return View(tags.OrderBy(t => t.Name));
         }
 
         public ActionResult Create()
@@ -87,6 +88,12 @@ namespace TabloidMVC.Controllers
             {
                 return View(tag);
             }
+        }
+
+        private int GetCurrentUserId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
