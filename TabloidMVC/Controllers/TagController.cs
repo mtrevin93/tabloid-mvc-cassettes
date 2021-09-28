@@ -51,7 +51,27 @@ namespace TabloidMVC.Controllers
                     return View(tag);
                 }
             }
+        }
 
+        public ActionResult Delete()
+        {
+            return View("Index");
+        }
+
+        [HttpDelete]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(Tag tag)
+        {
+            try
+            {
+                _tagRepo.DeleteTag(tag);
+
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                return View("Index");
+            }
         }
     }
 }
