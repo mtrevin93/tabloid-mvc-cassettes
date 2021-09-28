@@ -302,7 +302,8 @@ namespace TabloidMVC.Repositories
                               p.CreateDateTime, p.PublishDateTime, p.IsApproved,
                               p.CategoryId, p.UserProfileId,
                               c.[Name] AS CategoryName,
-                              u.FirstName, u.LastName, u.DisplayName, 
+                              u.FirstName, u.LastName, u.DisplayName,
+                              up.DisplayName AS CommentAuthor,
                               u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
                               u.UserTypeId, 
                               ut.[Name] AS UserTypeName,
@@ -315,6 +316,7 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
                               LEFT JOIN Comment cm ON p.Id = cm.PostId
+                              LEFT JOIN UserProfile up ON cm.UserProfileId = up.Id
                         WHERE p.id = @id";
 
                     cmd.Parameters.AddWithValue("@id", postId);
@@ -335,7 +337,7 @@ namespace TabloidMVC.Repositories
                             Content = reader.GetString(reader.GetOrdinal("Content")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
-                            Author = new UserProfile { Id = reader.GetOrdinal("UserProfileId") }
+                            Author = new UserProfile { DisplayName = reader.GetString(reader.GetOrdinal("CommentAuthor")) }
                         };
                         post.Comments.Add(comment);
                     }

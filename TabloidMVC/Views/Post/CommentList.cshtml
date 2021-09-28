@@ -4,7 +4,7 @@
     ViewData["Title"] = "Comments";
 }
 
-<h1>Comments</h1>
+<h1>@Model.Title Comments </h1>
 
 <table class="table">
     <thead>
@@ -19,7 +19,7 @@
                 @Html.DisplayNameFor(model => model.Comment.CreateDateTime)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Comment.Author.DisplayName)
+                By
             </th>
             <th></th>
         </tr>
