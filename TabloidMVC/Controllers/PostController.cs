@@ -93,7 +93,12 @@ namespace TabloidMVC.Controllers
         }
         public IActionResult CreateComment(int postId)
         {
-            Comment comment = new Comment { PostId = postId, Author = new UserProfile { Id = GetCurrentUserProfileId() } };
+            Comment comment = new Comment
+            {
+                PostId = postId,
+                Author = new UserProfile { Id = GetCurrentUserProfileId() },
+                CreateDateTime = DateAndTime.Now
+            };
 
             return View(comment);
         }
