@@ -5,6 +5,8 @@ using Microsoft.VisualBasic;
 using System.Security.Claims;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
+using TabloidMVC.Models;
+using System;
 
 namespace TabloidMVC.Controllers
 {
@@ -22,23 +24,45 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            var posts = _postRepository.GetAllPublishedPosts();
-            return View(posts);
+            //Use postlistviewmodel to pass current user's id
+            var vm = new PostListViewModel() { UserId = GetCurrentUserProfileId() };
+
+            vm.Posts = _postRepository.GetAllPublishedPosts();
+
+            return View(vm);
+        }
+
+        public IActionResult MyIndex()
+        {
+            //Use postlistviewmodel to pass current user's id
+            int userId = GetCurrentUserProfileId();
+
+            var myPosts = _postRepository.GetMyPosts(userId);
+
+            var vm = new PostListViewModel() { Posts = myPosts, UserId = userId };
+
+            return View(vm);
         }
 
         public IActionResult Details(int id)
         {
+            int userId = GetCurrentUserProfileId();
+            
+            //Gets published or unpublished post by user
             var post = _postRepository.GetPublishedPostById(id);
             if (post == null)
             {
-                int userId = GetCurrentUserProfileId();
                 post = _postRepository.GetUserPostById(id, userId);
                 if (post == null)
                 {
                     return NotFound();
                 }
             }
-            return View(post);
+            //Use postdetails view model to pass current user id
+
+            PostDetailsViewModel vm = new PostDetailsViewModel { Post = post, CurrentUserId = userId };
+
+            return View(vm);
         }
 
         public IActionResult Create()
@@ -67,6 +91,43 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
+
+        public IActionResult Delete(Post post)
+        {
+            try
+            {
+                _postRepository.Delete(post);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return RedirectToAction("Details", new { id = post.Id });
+            }
+        }
+        public IActionResult Edit(int id)
+        {
+            var post = _postRepository.GetPublishedPostById(id);
+
+            //Dependency - categorybyID from categoryrepo
+            //post.Category = _categoryRepository.GetById(post.CategoryId);
+                
+            return View(post);
+        }
+        [HttpPost]
+        public IActionResult Edit(Post post)
+        {
+            try
+            {
+                _postRepository.Update(post);
+
+                return RedirectToAction("Details", new { id = post.Id } );
+        }
+            catch (Exception ex)
+            {
+                return View(post);
+    }
+}
 
         private int GetCurrentUserProfileId()
         {
