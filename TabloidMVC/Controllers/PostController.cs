@@ -91,11 +91,11 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
-        public IActionResult CreateComment(int postId)
+        public IActionResult CreateComment(Post post)
         {
             Comment comment = new Comment
             {
-                PostId = postId
+                PostId = post.Id
             };
 
             return View(comment);
@@ -110,12 +110,19 @@ namespace TabloidMVC.Controllers
 
                 _postRepository.AddComment(comment);
 
-                return RedirectToAction("Details", new { id = comment.PostId });
+                return RedirectToAction("CommentList", new { id = comment.PostId });
             }
             catch (Exception ex)
             {
-                return RedirectToAction("Edit", new { id = comment.PostId });
+                return RedirectToAction("Details", new { id = comment.PostId });
             }
+        }
+        public IActionResult CommentList(int id)
+        {
+            //Replace post from details page with post with comments attached
+            Post post = _postRepository.GetPostWithComments(id);
+
+            return View(post.Comments);
         }
 
         public IActionResult Delete(Post post)

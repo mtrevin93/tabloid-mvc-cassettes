@@ -289,7 +289,7 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        public Post GetPostComments(int postId)
+        public Post GetPostWithComments(int postId)
         {
             using (var conn = Connection)
             {
@@ -306,15 +306,15 @@ namespace TabloidMVC.Repositories
                               u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
                               u.UserTypeId, 
                               ut.[Name] AS UserTypeName,
-                              c.UserProfileId,
-                              c.Subject,
-                              c.Content,
-                              c.CreateDateTime
+                              cm.UserProfileId,
+                              cm.Subject,
+                              cm.Content,
+                              cm.CreateDateTime
                          FROM Post p
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                              LEFT JOIN Comment c ON c.PostId = p.Id
+                              LEFT JOIN Comment cm ON p.Id = cm.PostId
                         WHERE p.id = @id";
 
                     cmd.Parameters.AddWithValue("@id", postId);
@@ -325,6 +325,7 @@ namespace TabloidMVC.Repositories
                     if (reader.Read())
                     {
                         post = NewPostFromReader(reader);
+                        post.Comments = new List<Comment>();
                     }
 
                     while (reader.Read())
