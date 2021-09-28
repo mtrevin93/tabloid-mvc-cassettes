@@ -289,5 +289,61 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        public Post GetPostComments(int postId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT p.Id, p.Title, p.Content, 
+                              p.ImageLocation AS HeaderImage,
+                              p.CreateDateTime, p.PublishDateTime, p.IsApproved,
+                              p.CategoryId, p.UserProfileId,
+                              c.[Name] AS CategoryName,
+                              u.FirstName, u.LastName, u.DisplayName, 
+                              u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
+                              u.UserTypeId, 
+                              ut.[Name] AS UserTypeName,
+                              c.UserProfileId,
+                              c.Subject,
+                              c.Content,
+                              c.CreateDateTime
+                         FROM Post p
+                              LEFT JOIN Category c ON p.CategoryId = c.id
+                              LEFT JOIN UserProfile u ON p.UserProfileId = u.id
+                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                              LEFT JOIN Comment c ON c.PostId = p.Id
+                        WHERE p.id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", postId);
+                    var reader = cmd.ExecuteReader();
+
+                    Post post = null;
+
+                    if (reader.Read())
+                    {
+                        post = NewPostFromReader(reader);
+                    }
+
+                    while (reader.Read())
+                    {
+                        Comment comment = new Comment
+                        {
+                            Content = reader.GetString(reader.GetOrdinal("Content")),
+                            Subject = reader.GetString(reader.GetOrdinal("Subject")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            Author = new UserProfile { Id = reader.GetOrdinal("UserProfileId") }
+                        };
+                        post.Comments.Add(comment);
+                    }
+
+                    reader.Close();
+
+                    return post;
+                }
+            }
+        }
     }
 }

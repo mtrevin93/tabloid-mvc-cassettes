@@ -126,8 +126,8 @@ namespace TabloidMVC.Controllers
             catch (Exception ex)
             {
                 return View(post);
-    }
-}
+            }
+        }
 
         private int GetCurrentUserProfileId()
         {
