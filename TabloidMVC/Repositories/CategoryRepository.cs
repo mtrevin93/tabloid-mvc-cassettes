@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using TabloidMVC.Models;
+using Microsoft.Data.SqlClient;
+
 
 namespace TabloidMVC.Repositories
 {
@@ -14,7 +16,11 @@ namespace TabloidMVC.Repositories
                 conn.Open();
                 using (var cmd = conn.CreateCommand())
                 {
-                    cmd.CommandText = "SELECT id, name FROM Category";
+                    cmd.CommandText = @"SELECT id, name
+                        FROM Category
+                        WHERE IsDeleted = 0
+                        ORDER BY name
+                        ";
                     var reader = cmd.ExecuteReader();
 
                     var categories = new List<Category>();
@@ -34,5 +40,104 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public Category GetCategoryById(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        SELECT Id, Name
+                        FROM Category
+                        WHERE Id = @id
+                        ";
+
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    Category category = null;
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            if (category == null)
+                            {
+                                category = new Category
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                    Name = reader.GetString(reader.GetOrdinal("Name"))
+                                };
+                            }
+
+                        }
+                    }
+                    return category;
+                }
+            }
+        }
+
+        public void AddCategory(Category category)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                    INSERT INTO Category([Name], IsDeleted)
+                    OUTPUT INSERTED.ID
+                    VALUES ( @name, @IsDeleted );
+                    ";
+
+                    cmd.Parameters.AddWithValue("@name", category.Name);
+                    cmd.Parameters.AddWithValue("@IsDeleted", 0);
+
+                    category.Id = (int)cmd.ExecuteScalar();
+
+                }
+            }
+        }
+
+        public void UpdateCategory(Category category)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        Update Category
+                        SET
+                            [Name] = @name
+                        WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@name", category.Name);
+                    cmd.Parameters.AddWithValue("@id", category.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public void DeleteCategory(Category category)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        Update Category
+                        SET [IsDeleted] = 1
+                        WHERE Id = @id
+                        ";
+                    cmd.Parameters.AddWithValue("@id", category.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
     }
 }
