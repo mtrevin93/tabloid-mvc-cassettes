@@ -29,18 +29,29 @@ namespace TabloidMVC.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(Tag newTag)
+        public ActionResult Create(Tag tag)
         {
-            try
-            {
-                _tagRepo.AddTag(newTag);
+            List<Tag> tags = _tagRepo.GetAllTags();
 
-                return RedirectToAction("Index");
-            }
-            catch (Exception ex)
+            if (tags.Any(t => t.Name == tag.Name))
             {
-                return View(newTag);
+                ModelState.AddModelError("", "Tag already exists.");
+                return View(tag);
             }
+            else
+            {
+                try
+                {
+                    _tagRepo.AddTag(tag);
+
+                    return RedirectToAction("Index");
+                }
+                catch (Exception ex)
+                {
+                    return View(tag);
+                }
+            }
+
         }
     }
 }
