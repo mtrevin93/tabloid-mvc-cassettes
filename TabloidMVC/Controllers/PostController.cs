@@ -122,7 +122,7 @@ namespace TabloidMVC.Controllers
             //Replace post from details page with post with comments attached
             Post post = _postRepository.GetPostWithComments(id);
 
-            return View(post.Comments);
+            return View(post);
         }
 
         public IActionResult Delete(Post post)
