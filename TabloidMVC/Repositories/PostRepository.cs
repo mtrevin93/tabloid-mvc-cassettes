@@ -216,6 +216,7 @@ namespace TabloidMVC.Repositories
                 CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                 PublishDateTime = DbUtils.GetNullableDateTime(reader, "PublishDateTime"),
                 CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
+                IsApproved = reader.GetBoolean(reader.GetOrdinal("IsApproved")),
                 Category = new Category()
                 {
                     Id = reader.GetInt32(reader.GetOrdinal("CategoryId")),
@@ -253,6 +254,37 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@id", post.Id);
 
                     cmd.ExecuteNonQuery();
+                }
+            }
+        }
+        public void Update(Post post)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Post SET
+                                      Title = @title,
+                                      Content = @content,
+                                      ImageLocation = @imageLocation,
+                                      CreateDateTime = @createDateTime,
+                                      PublishDateTime = @publishDateTime,
+                                      IsApproved = @isApproved,
+                                      CategoryId = @categoryId,
+                                      WHERE Id = Id";
+
+                    cmd.Parameters.AddWithValue("@Title", post.Title);
+                    cmd.Parameters.AddWithValue("@Content", post.Content);
+                    cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(post.ImageLocation));
+                    cmd.Parameters.AddWithValue("@CreateDateTime", post.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@PublishDateTime", DbUtils.ValueOrDBNull(post.PublishDateTime));
+                    cmd.Parameters.AddWithValue("@IsApproved", post.IsApproved);
+                    cmd.Parameters.AddWithValue("@CategoryId", post.CategoryId);
+
+                    cmd.ExecuteNonQuery();
+
                 }
             }
         }

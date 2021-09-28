@@ -102,6 +102,26 @@ namespace TabloidMVC.Controllers
                 return View(post);
             }
         }
+        public IActionResult Edit(int id)
+        {
+            var post = _postRepository.GetPublishedPostById(id);
+                
+            return View(post);
+        }
+        [HttpPost]
+        public IActionResult Edit(Post post)
+        {
+            try
+            {
+                _postRepository.Update(post);
+
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(post);
+            }
+        }
 
         private int GetCurrentUserProfileId()
         {
