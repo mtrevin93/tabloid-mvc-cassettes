@@ -70,6 +70,7 @@ namespace TabloidMVC.Controllers
         // GET: CategoryController/Edit/5
         public ActionResult Edit(int id)
         {
+            Category category = _catRepo.
             return View();
         }
 
