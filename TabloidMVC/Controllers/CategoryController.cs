@@ -14,18 +14,18 @@ namespace TabloidMVC.Controllers
 {
     public class CategoryController : Controller
     {
-        private readonly ICategoryRepository _catRepo;
+        private readonly ICategoryRepository _categoryRepository;
 
         //dependency injection
         public CategoryController(ICategoryRepository categoryRepository)
         {
-            _catRepo = categoryRepository;
+            _categoryRepository = categoryRepository;
         }
 
         // GET: CategoryController
         public ActionResult Index()
         {
-            List<Category> categories = _catRepo.GetAll();
+            List<Category> categories = _categoryRepository.GetAll();
             return View(categories);
         }
 
@@ -46,8 +46,8 @@ namespace TabloidMVC.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Create(Category category)
         {
-            List<Category> categories = _catRepo.GetAll();
-            if (categories.Any(c => c.Name == category.Name))
+            List<Category> categories = _categoryRepository.GetAll();
+            if (categories.Any(c => c.Name == category.Name && c.isDeleted == true))
             {
                 ModelState.AddModelError("", "Category already exists.");
                 return View(category);
@@ -56,7 +56,7 @@ namespace TabloidMVC.Controllers
             {
                 try
                 {
-                    _catRepo.AddCategory(category);
+                    _categoryRepository.AddCategory(category);
 
                     return RedirectToAction("Index");
                 }
@@ -70,43 +70,44 @@ namespace TabloidMVC.Controllers
         // GET: CategoryController/Edit/5
         public ActionResult Edit(int id)
         {
-            Category category = _catRepo.
-            return View();
+            Category category = _categoryRepository.GetCategoryById(id);
+            if (category == null)
+            {
+                return NotFound();
+            }
+            return View(category);
         }
 
         // POST: CategoryController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public ActionResult Edit(int id, Category category)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _categoryRepository.UpdateCategory(category);
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(category);
             }
         }
 
-        // GET: CategoryController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
+
 
         // POST: CategoryController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+       
+        public ActionResult Delete(Category category)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _categoryRepository.DeleteCategory(category);
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+                return View(category);
             }
         }
     }
