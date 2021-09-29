@@ -49,10 +49,10 @@ namespace TabloidMVC.Controllers
                 return RedirectToAction("Post","Details", new { id = comment.PostId });
             }
         }
-        public IActionResult Index(int id)
+        public IActionResult Index(int postId)
         {
             //Replace post from details page with post with comments attached
-            Post post = _postRepository.GetPostWithComments(id);
+            Post post = _postRepository.GetPostWithComments(postId);
 
             var vm = new PostDetailsViewModel
             {
@@ -69,7 +69,7 @@ namespace TabloidMVC.Controllers
 
             _commentRepository.DeleteComment(comment);
 
-            return RedirectToAction("CommentList", new { id = post.Id });
+            return RedirectToAction("Index", new { postId = post.Id });
         }
 
         
