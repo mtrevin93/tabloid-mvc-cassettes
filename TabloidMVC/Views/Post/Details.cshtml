@@ -29,8 +29,9 @@
                 <div class="col justify-content-between align-content-end">
                     @foreach (var item in Model.Reactions)
                     {
-                        <a asp-action="Create" asp-route-postId="@Model.Post.Id" asp-route-reactionId="@item.Id" class="btn btn-outline-primary mx-1" title="@item.Name">
+                        <a asp-action="Create" asp-controller="Reaction" asp-route-postId="@Model.Post.Id" asp-route-reactionId="@item.Id" class="btn btn-outline-primary mx-1" title="@item.Name">
                             <img src="@item.ImageLocation" height="18" width="16"/>
+                            <p style="position:absolute; right: @item.TimesUsed"></p>
                         </a>
                     }
                 </div>

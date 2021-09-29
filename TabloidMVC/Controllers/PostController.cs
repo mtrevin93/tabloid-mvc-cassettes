@@ -70,6 +70,11 @@ namespace TabloidMVC.Controllers
                 Reactions = _reactionRepository.Get()
             };
 
+            foreach(var reaction in vm.Reactions)
+            {
+                reaction.TimesUsed = _reactionRepository.GetTimesUsed(id, reaction.Id);
+            }
+
             return View(vm);
         }
 

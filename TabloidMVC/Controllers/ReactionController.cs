@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
+using System.Security.Claims;
 
 namespace TabloidMVC.Controllers
 {
@@ -32,24 +33,13 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: ReactionController/Create
-        public ActionResult Create()
+        public ActionResult Create(int postId, int reactionId)
         {
-            return View();
-        }
+            int userProfileId = GetCurrentUserProfileId();
 
-        // POST: ReactionController/Create
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
+            _reactionRepository.Add(postId, reactionId, userProfileId);
+
+            return RedirectToAction("Details", "Post", new  { id = postId });
         }
 
         // GET: ReactionController/Edit/5
@@ -92,6 +82,11 @@ namespace TabloidMVC.Controllers
             {
                 return View();
             }
+        }
+        private int GetCurrentUserProfileId()
+        {
+            string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            return int.Parse(id);
         }
     }
 }
