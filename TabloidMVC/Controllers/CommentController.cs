@@ -72,26 +72,36 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Index", new { postId = post.Id });
         }
 
-        
-        public IActionResult Edit(Comment comment)
+        public IActionResult Details(int id)
         {
-            //var comment = _postRepository.GetPublishedPostById(id);
+            var currentUserId = GetCurrentUserProfileId();
+
+            var comment = _commentRepository.GetCommentById(id);
+
+            var vm = new CommentDetailsViewModel { Comment = comment, CurrentUserId = currentUserId };
+
+            return View(vm);
+        }
+
+        public IActionResult Edit(int id)
+        {
+            var comment = _commentRepository.GetCommentById(id);
 
             return View(comment);
         }
         [HttpPost]
-        public IActionResult Edit(Post post)
+        public IActionResult Edit(Comment comment)
         {
-            try
-            {
-                _postRepository.Update(post);
+            //try
+            //{
+                _commentRepository.Edit(comment);
 
-                return RedirectToAction("Details", new { id = post.Id });
-            }
-            catch (Exception ex)
-            {
-                return View(post);
-            }
+                return RedirectToAction("Details", new { id = comment.Id });
+            //}
+            //catch (Exception ex)
+            //{
+            //    return View(comment);
+            //}
         }
 
         private int GetCurrentUserProfileId()

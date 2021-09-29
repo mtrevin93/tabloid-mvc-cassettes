@@ -38,25 +38,56 @@ namespace TabloidMVC.Repositories
                 {
                     cmd.CommandText = @"UPDATE Comment SET
                                       Subject = @subject,
-                                      Content = @content,
-                                      PostId = @postId,
-                                      UserProfileId = @userProfileId,
-                                      CreateDateTime = @createDateTime,
+                                      Content = @content
                                       WHERE Id = @id";
 
                     cmd.Parameters.AddWithValue("@id", comment.Id);
                     cmd.Parameters.AddWithValue("@Subject", comment.Subject);
                     cmd.Parameters.AddWithValue("@Content", comment.Content);
-                    cmd.Parameters.AddWithValue("@CreateDateTime", comment.CreateDateTime);
-                    cmd.Parameters.AddWithValue("@PostId", comment.PostId);
-                    cmd.Parameters.AddWithValue("@UserProfileId", comment.Author.Id);
-
 
                     cmd.ExecuteNonQuery();
 
                 }
             }
         }
+
+        public Comment GetCommentById(int id)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT Subject, Content, PostId, UserProfileId, cm.CreateDateTime, up.Id AS AuthorId, up.DisplayName AS CommentAuthor
+                       FROM Comment cm
+                       LEFT JOIN UserProfile up ON cm.UserProfileId = up.Id
+                       WHERE cm.id=@id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+                    var reader = cmd.ExecuteReader();
+
+                    Comment comment = new Comment();
+                    if (reader.Read())
+                    {
+                            comment.Id = id;
+                            comment.Content = reader.GetString(reader.GetOrdinal("Content"));
+                            comment.Subject = reader.GetString(reader.GetOrdinal("Subject"));
+                            comment.CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime"));
+                            comment.PostId = reader.GetInt32(reader.GetOrdinal("PostId"));
+                            comment.Author = new UserProfile
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("AuthorId")),
+                                DisplayName = reader.GetString(reader.GetOrdinal("CommentAuthor"))
+                            };
+                    }
+
+                    reader.Close();
+                    return comment;
+                }
+            }
+        }
+
         public Post GetPostByComment(Comment comment)
         {
             using (SqlConnection conn = Connection)

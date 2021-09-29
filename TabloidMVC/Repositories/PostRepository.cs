@@ -334,7 +334,8 @@ namespace TabloidMVC.Repositories
                         post = NewPostFromReader(reader);
                         post.Comments = new List<Comment>();
                     }
-
+                    if (!reader.IsDBNull(reader.GetOrdinal("CommentId")))
+                        {
                         Comment comment = new Comment
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("CommentId")),
@@ -348,6 +349,7 @@ namespace TabloidMVC.Repositories
                             }
                         };
                         post.Comments.Add(comment);
+                        }
                     }
 
                     reader.Close();
