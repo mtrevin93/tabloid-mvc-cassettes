@@ -30,5 +30,61 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public void DeletePostTag(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"DELETE FROM PostTag WHERE Id = @id";
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List<PostTag> GetAllPostTags(int id)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT pt.Id AS PostTagId, PostId, TagId, t.Id AS TagsId, Name 
+                                        FROM PostTag pt
+                                        JOIN Tag t ON pt.TagId = t.Id
+                                        WHERE PostId = @id";
+
+                    cmd.Parameters.AddWithValue("@id", id);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<PostTag> PostTags = new List<PostTag>();
+
+                    while(reader.Read())
+                    {
+                        PostTag PostTag = new PostTag
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("PostTagId")),
+                            PostId = id,
+                            Tag = new Tag
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("TagId")),
+                                Name = reader.GetString(reader.GetOrdinal("Name"))
+                            }
+                        };
+                        
+                        PostTags.Add(PostTag);
+                    }
+                    reader.Close();
+                    return PostTags;
+                }
+            }
+        }
     }
 }

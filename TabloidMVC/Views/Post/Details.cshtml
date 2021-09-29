@@ -10,6 +10,12 @@
             <div class="row justify-content-between">
                 <h1 class="text-secondary">@Model.Post.Title</h1>
                 <h1 class="text-black-50">@Model.Post.Category.Name</h1>
+                    @foreach (PostTag postTag in @Model.Post.PostTags)
+                    {
+                        <div>
+                            <h3> @Html.DisplayFor(modelItem => postTag.Tag.Name) </h3>
+                        </div>
+                    }
             </div>
             <div class="row justify-content-between">
                 <p class="text-secondary">Written by @Model.Post.UserProfile.DisplayName</p>
@@ -44,6 +50,9 @@
     </div>
     <a asp-action="Index">Back to List</a>
     <a asp-controller="PostTag" asp-action="Create" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="PostTag">
-        Add Tag
+        Manage Tags
+    </a>
+    <a asp-controller="PostTag" asp-action="Delete" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="PostTag">
+        Delete Tags
     </a>
 </div>

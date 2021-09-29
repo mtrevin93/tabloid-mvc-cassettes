@@ -15,8 +15,6 @@ namespace TabloidMVC.Models.ViewModels
 
         public List<int> TagsSelected { get; set; }
 
-        public List<int> PostTagsSelected { get; set; }
-
         public List<PostTag> PostTags { get; set; }
     }
 }

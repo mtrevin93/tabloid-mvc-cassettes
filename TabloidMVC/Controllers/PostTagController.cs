@@ -113,21 +113,49 @@ namespace TabloidMVC.Controllers
         // GET: PostTagController/Delete/5
         public ActionResult Delete(int id)
         {
-            return View();
+            List<PostTag> PostTags = _postTagRepo.GetAllPostTags(id);
+
+            List<int> TagsSelected = new List<int>();
+            Post post = _postRepo.GetPublishedPostById(id);
+
+            PostTagViewModel pt = new PostTagViewModel
+            {
+                PostTag = new PostTag(),
+                TagsSelected = TagsSelected,
+                PostId = id,
+                PostTags = PostTags
+            };
+            return View(pt);
         }
 
         // POST: PostTagController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(PostTagViewModel pt)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                foreach (int PostTagId in pt.TagsSelected)
+                {
+                    _postTagRepo.DeletePostTag(PostTagId);
+                }
+                return RedirectToAction("Details", "Post", new { id = pt.PostId });
             }
             catch
             {
-                return View();
+                List<PostTag> PostTags = _postTagRepo.GetAllPostTags(pt.PostId);
+
+                List<int> TagsSelected = new List<int>();
+                Post post = _postRepo.GetPublishedPostById(pt.PostId);
+
+                PostTagViewModel ptvm = new PostTagViewModel
+                {
+                    PostTag = new PostTag(),
+                    TagsSelected = TagsSelected,
+                    PostId = pt.PostId,
+                    PostTags = PostTags
+                };
+                return View(ptvm);
             }
         }
     }
