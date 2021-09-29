@@ -31,7 +31,7 @@
                     {
                         <a asp-action="Create" asp-controller="Reaction" asp-route-postId="@Model.Post.Id" asp-route-reactionId="@item.Id" class="btn btn-outline-primary mx-1" title="@item.Name">
                             <img src="@item.ImageLocation" height="18" width="16"/>
-                            <p style="position:absolute; right: @item.TimesUsed"></p>
+                            <p style="position:absolute" height="4", width="4">@item.TimesUsed</p>
                         </a>
                     }
                 </div>
