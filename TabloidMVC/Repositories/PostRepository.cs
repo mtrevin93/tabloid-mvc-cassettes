@@ -308,6 +308,7 @@ namespace TabloidMVC.Repositories
                               u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
                               u.UserTypeId, 
                               ut.[Name] AS UserTypeName,
+                              cm.Id AS CommentId,
                               cm.UserProfileId,
                               cm.Subject,
                               cm.Content,
@@ -335,6 +336,7 @@ namespace TabloidMVC.Repositories
                     {
                         Comment comment = new Comment
                         {
+                            Id = reader.GetInt32(reader.GetOrdinal("CommentId")),
                             Content = reader.GetString(reader.GetOrdinal("Content")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),

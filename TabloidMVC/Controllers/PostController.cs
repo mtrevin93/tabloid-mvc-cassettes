@@ -15,11 +15,13 @@ namespace TabloidMVC.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ICommentRepository _commentRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository)
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ICommentRepository commentRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
+            _commentRepository = commentRepository;
         }
 
         public IActionResult Index()
@@ -122,9 +124,21 @@ namespace TabloidMVC.Controllers
             //Replace post from details page with post with comments attached
             Post post = _postRepository.GetPostWithComments(id);
 
-            var vm = new PostDetailsViewModel { Post = post, CurrentUserId = GetCurrentUserProfileId() };
+            var vm = new PostDetailsViewModel { 
+                Post = post,
+                CurrentUserId = GetCurrentUserProfileId(),
+            };
 
             return View(vm);
+        }
+
+        public IActionResult DeleteComment(Comment comment)
+        {
+            Post post = _commentRepository.GetPostByComment(comment);
+
+            _commentRepository.DeleteComment(comment);
+
+            return RedirectToAction("CommentList", new { id = post.Id });
         }
 
         public IActionResult Delete(Post post)

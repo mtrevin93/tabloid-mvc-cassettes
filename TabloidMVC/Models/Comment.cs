@@ -18,6 +18,7 @@ namespace TabloidMVC.Models
         public DateTime CreateDateTime { get; set; }
         public UserProfile Author { get; set; }
         public int PostId { get; set; }
+        public int Id { get; set; }
 
     }
 }
