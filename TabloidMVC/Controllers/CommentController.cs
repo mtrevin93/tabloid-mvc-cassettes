@@ -73,14 +73,11 @@ namespace TabloidMVC.Controllers
         }
 
         
-        public IActionResult Edit(int id)
+        public IActionResult Edit(Comment comment)
         {
-            var post = _postRepository.GetPublishedPostById(id);
+            //var comment = _postRepository.GetPublishedPostById(id);
 
-            //Dependency - categorybyID from categoryrepo
-            //post.Category = _categoryRepository.GetById(post.CategoryId);
-
-            return View(post);
+            return View(comment);
         }
         [HttpPost]
         public IActionResult Edit(Post post)

@@ -30,7 +30,32 @@ namespace TabloidMVC.Repositories
         }
         public void Edit(Comment comment)
         {
-            return;
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"UPDATE Comment SET
+                                      Subject = @subject,
+                                      Content = @content,
+                                      PostId = @postId,
+                                      UserProfileId = @userProfileId,
+                                      CreateDateTime = @createDateTime,
+                                      WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@id", comment.Id);
+                    cmd.Parameters.AddWithValue("@Subject", comment.Subject);
+                    cmd.Parameters.AddWithValue("@Content", comment.Content);
+                    cmd.Parameters.AddWithValue("@CreateDateTime", comment.CreateDateTime);
+                    cmd.Parameters.AddWithValue("@PostId", comment.PostId);
+                    cmd.Parameters.AddWithValue("@UserProfileId", comment.Author.Id);
+
+
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
         }
         public Post GetPostByComment(Comment comment)
         {
