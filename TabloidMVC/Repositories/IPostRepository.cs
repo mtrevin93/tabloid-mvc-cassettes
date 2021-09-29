@@ -12,5 +12,6 @@ namespace TabloidMVC.Repositories
         List<Post> GetMyPosts(int userId);
         void Delete(Post post);
         void Update(Post post);
+        Post GetPostWithComments(int postId);
     }
 }

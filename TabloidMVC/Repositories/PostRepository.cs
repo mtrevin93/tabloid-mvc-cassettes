@@ -186,11 +186,11 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"
                         INSERT INTO Post (
                             Title, Content, ImageLocation, CreateDateTime, PublishDateTime,
-                            IsApproved, CategoryId, UserProfileId )
+                            IsApproved, CategoryId, UserProfileId)
                         OUTPUT INSERTED.ID
                         VALUES (
                             @Title, @Content, @ImageLocation, @CreateDateTime, @PublishDateTime,
-                            @IsApproved, @CategoryId, @UserProfileId )";
+                            @IsApproved, @CategoryId, @UserProfileId)";
                     cmd.Parameters.AddWithValue("@Title", post.Title);
                     cmd.Parameters.AddWithValue("@Content", post.Content);
                     cmd.Parameters.AddWithValue("@ImageLocation", DbUtils.ValueOrDBNull(post.ImageLocation));
@@ -286,6 +286,75 @@ namespace TabloidMVC.Repositories
 
                     cmd.ExecuteNonQuery();
 
+                }
+            }
+        }
+        public Post GetPostWithComments(int postId)
+        {
+            using (var conn = Connection)
+            {
+                conn.Open();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                       SELECT p.Id, p.Title, p.Content, 
+                              p.ImageLocation AS HeaderImage,
+                              p.CreateDateTime, p.PublishDateTime, p.IsApproved,
+                              p.CategoryId, p.UserProfileId,
+                              c.[Name] AS CategoryName,
+                              u.FirstName, u.LastName, u.DisplayName,
+                              up.DisplayName AS CommentAuthor,
+                              up.Id AS AuthorId,
+                              u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
+                              u.UserTypeId, 
+                              ut.[Name] AS UserTypeName,
+                              cm.Id AS CommentId,
+                              cm.UserProfileId,
+                              cm.Subject,
+                              cm.Content AS CommentContent,
+                              cm.CreateDateTime
+                         FROM Post p
+                              LEFT JOIN Category c ON p.CategoryId = c.id
+                              LEFT JOIN UserProfile u ON p.UserProfileId = u.id
+                              LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                              LEFT JOIN Comment cm ON p.Id = cm.PostId
+                              LEFT JOIN UserProfile up ON cm.UserProfileId = up.Id
+                        WHERE p.id = @id
+                        ORDER BY cm.CreateDateTime DESC";
+
+                    cmd.Parameters.AddWithValue("@id", postId);
+                    var reader = cmd.ExecuteReader();
+
+                    Post post = null;
+
+                    while (reader.Read())
+                    {
+                    if (post == null)
+                    {
+                        post = NewPostFromReader(reader);
+                        post.Comments = new List<Comment>();
+                    }
+                    if (!reader.IsDBNull(reader.GetOrdinal("CommentId")))
+                        {
+                        Comment comment = new Comment
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("CommentId")),
+                            Content = reader.GetString(reader.GetOrdinal("CommentContent")),
+                            Subject = reader.GetString(reader.GetOrdinal("Subject")),
+                            CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                            Author = new UserProfile 
+                            { 
+                                Id = reader.GetInt32(reader.GetOrdinal("AuthorId")),
+                                DisplayName = reader.GetString(reader.GetOrdinal("CommentAuthor")) 
+                            }
+                        };
+                        post.Comments.Add(comment);
+                        }
+                    }
+
+                    reader.Close();
+
+                    return post;
                 }
             }
         }

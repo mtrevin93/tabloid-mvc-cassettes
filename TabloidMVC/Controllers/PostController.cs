@@ -15,11 +15,15 @@ namespace TabloidMVC.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly ICommentRepository _commentRepository;
+        private readonly IPostTagRepository _postTagRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository)
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ICommentRepository commentRepository, IPostTagRepository postTagRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
+            _commentRepository = commentRepository;
+            _postTagRepository = postTagRepository;
         }
 
         public IActionResult Index()
@@ -60,7 +64,13 @@ namespace TabloidMVC.Controllers
             }
             //Use postdetails view model to pass current user id
 
-            PostDetailsViewModel vm = new PostDetailsViewModel { Post = post, CurrentUserId = userId };
+            PostDetailsViewModel vm = new PostDetailsViewModel { 
+                Post = post, 
+                CurrentUserId = userId,
+                PostId = id,
+                Category = _categoryRepository.GetCategoryById(post.CategoryId),
+                PostTag = _postTagRepository.GetAllPostTags(id)
+            };
 
             return View(vm);
         }
@@ -84,14 +94,13 @@ namespace TabloidMVC.Controllers
                 _postRepository.Add(vm.Post);
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
-            } 
-            catch
+        } 
+            catch(Exception ex)
             {
                 vm.CategoryOptions = _categoryRepository.GetAll();
                 return View(vm);
-            }
-        }
-
+    }
+}
         public IActionResult Delete(Post post)
         {
             try
@@ -109,25 +118,32 @@ namespace TabloidMVC.Controllers
         {
             var post = _postRepository.GetPublishedPostById(id);
 
-            //Dependency - categorybyID from categoryrepo
-            //post.Category = _categoryRepository.GetById(post.CategoryId);
-                
-            return View(post);
+            post.Category = _categoryRepository.GetCategoryById(post.CategoryId);
+            var categories = _categoryRepository.GetAll();
+
+            var vm = new PostDetailsViewModel();
+
+            vm.Categories = categories;
+            vm.Post = post;
+
+            return View(vm);
         }
         [HttpPost]
-        public IActionResult Edit(Post post)
+        public IActionResult Edit(PostDetailsViewModel postDetailsViewModel)
         {
+            var post = postDetailsViewModel.Post;
+
             try
             {
                 _postRepository.Update(post);
 
                 return RedirectToAction("Details", new { id = post.Id } );
-        }
+            }
             catch (Exception ex)
             {
-                return View(post);
-    }
-}
+                return View(postDetailsViewModel);
+            }
+        }
 
         private int GetCurrentUserProfileId()
         {
