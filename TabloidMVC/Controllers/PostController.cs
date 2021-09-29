@@ -130,16 +130,16 @@ namespace TabloidMVC.Controllers
         {
             var post = postDetailsViewModel.Post;
 
-            //try
-            //{
+            try
+            {
                 _postRepository.Update(post);
 
                 return RedirectToAction("Details", new { id = post.Id } );
-            //}
-            //catch (Exception ex)
-            //{
-            //    return View(postDetailsViewModel);
-            //}
+            }
+            catch (Exception ex)
+            {
+                return View(postDetailsViewModel);
+            }
         }
 
         private int GetCurrentUserProfileId()
