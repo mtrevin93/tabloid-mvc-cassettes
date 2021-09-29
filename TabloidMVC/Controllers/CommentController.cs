@@ -40,9 +40,9 @@ namespace TabloidMVC.Controllers
                 comment.Author = new UserProfile { Id = GetCurrentUserProfileId() };
                 comment.CreateDateTime = DateAndTime.Now;
 
-                _postRepository.AddComment(comment);
+                _commentRepository.Create(comment);
 
-                return RedirectToAction("CommentList", new { id = comment.PostId });
+                return RedirectToAction("Index", new { postId = comment.PostId });
             }
             catch (Exception ex)
             {
@@ -67,7 +67,7 @@ namespace TabloidMVC.Controllers
         {
             Post post = _commentRepository.GetPostByComment(comment);
 
-            _commentRepository.DeleteComment(comment);
+            _commentRepository.Delete(comment);
 
             return RedirectToAction("Index", new { postId = post.Id });
         }

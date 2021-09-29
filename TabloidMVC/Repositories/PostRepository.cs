@@ -311,7 +311,7 @@ namespace TabloidMVC.Repositories
                               cm.Id AS CommentId,
                               cm.UserProfileId,
                               cm.Subject,
-                              cm.Content,
+                              cm.Content AS CommentContent,
                               cm.CreateDateTime
                          FROM Post p
                               LEFT JOIN Category c ON p.CategoryId = c.id
@@ -327,18 +327,18 @@ namespace TabloidMVC.Repositories
 
                     Post post = null;
 
-                    if (reader.Read())
+                    while (reader.Read())
+                    {
+                    if (post == null)
                     {
                         post = NewPostFromReader(reader);
                         post.Comments = new List<Comment>();
                     }
 
-                    while (reader.Read())
-                    {
                         Comment comment = new Comment
                         {
                             Id = reader.GetInt32(reader.GetOrdinal("CommentId")),
-                            Content = reader.GetString(reader.GetOrdinal("Content")),
+                            Content = reader.GetString(reader.GetOrdinal("CommentContent")),
                             Subject = reader.GetString(reader.GetOrdinal("Subject")),
                             CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
                             Author = new UserProfile 
@@ -353,29 +353,6 @@ namespace TabloidMVC.Repositories
                     reader.Close();
 
                     return post;
-                }
-            }
-        }
-        public void AddComment(Comment comment)
-        {
-            using (var conn = Connection)
-            {
-                conn.Open();
-                using (var cmd = conn.CreateCommand())
-                {
-                    cmd.CommandText = @"
-                        INSERT INTO Comment (
-                            PostId, UserProfileId, Subject, Content, CreateDateTime)
-                        VALUES (
-                            @postId, @userProfileId, @subject, @content, @createDateTime)";
-
-                    cmd.Parameters.AddWithValue("@postId", comment.PostId);
-                    cmd.Parameters.AddWithValue("@userProfileId", comment.Author.Id);
-                    cmd.Parameters.AddWithValue("@subject", comment.Subject);
-                    cmd.Parameters.AddWithValue("@content", comment.Content);
-                    cmd.Parameters.AddWithValue("@CreateDateTime", comment.CreateDateTime);
-
-                    cmd.ExecuteNonQuery();
                 }
             }
         }

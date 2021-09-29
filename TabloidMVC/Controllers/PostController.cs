@@ -97,55 +97,6 @@ namespace TabloidMVC.Controllers
                 return View(vm);
             }
         }
-        public IActionResult CreateComment(Post post)
-        {
-            Comment comment = new Comment
-            {
-                PostId = post.Id
-            };
-
-            return View(comment);
-        }
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult CreateComment(Comment comment)
-        {
-            try
-            {
-                comment.Author = new UserProfile { Id = GetCurrentUserProfileId() };
-                comment.CreateDateTime = DateAndTime.Now;
-
-                _postRepository.AddComment(comment);
-
-                return RedirectToAction("CommentList", new { id = comment.PostId });
-            }
-            catch (Exception ex)
-            {
-                return RedirectToAction("Details", new { id = comment.PostId });
-            }
-        }
-        public IActionResult CommentList(int id)
-        {
-            //Replace post from details page with post with comments attached
-            Post post = _postRepository.GetPostWithComments(id);
-
-            var vm = new PostDetailsViewModel { 
-                Post = post,
-                CurrentUserId = GetCurrentUserProfileId(),
-            };
-
-            return View(vm);
-        }
-
-        public IActionResult DeleteComment(Comment comment)
-        {
-            Post post = _commentRepository.GetPostByComment(comment);
-
-            _commentRepository.DeleteComment(comment);
-
-            return RedirectToAction("CommentList", new { id = post.Id });
-        }
-
         public IActionResult Delete(Post post)
         {
             try

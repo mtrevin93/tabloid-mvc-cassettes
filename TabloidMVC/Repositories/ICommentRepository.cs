@@ -8,8 +8,9 @@ namespace TabloidMVC.Repositories
 {
     public interface ICommentRepository
     {
-        void DeleteComment(Comment comment);
+        void Delete(Comment comment);
         void Edit(Comment comment);
         Post GetPostByComment(Comment comment);
+        void Create(Comment comment);
     }
 }
