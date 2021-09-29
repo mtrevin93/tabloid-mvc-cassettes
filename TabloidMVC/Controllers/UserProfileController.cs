@@ -32,7 +32,7 @@ namespace TabloidMVC.Controllers
         public ActionResult Details(int id)
         {
             UserProfile user = _userProfileRepository.GetUserProfileById(id);
-            if(user == null)
+            if (user == null)
             {
                 return NotFound();
             }
@@ -82,24 +82,22 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: UserProfileController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: UserProfileController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public ActionResult Delete(UserProfile userProfile)
         {
             try
             {
-                return RedirectToAction(nameof(Index));
+                _userProfileRepository.DeactivateUserProfile(userProfile);
+                return RedirectToAction("Index");
             }
-            catch
+            catch (Exception ex)
             {
-                return View();
+
+                return View(userProfile);
             }
         }
+
+        
+
+
     }
 }

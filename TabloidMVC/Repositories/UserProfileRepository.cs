@@ -69,6 +69,7 @@ namespace TabloidMVC.Repositories
                                     ut.[Name] AS UserTypeName
                                 FROM UserProfile u
                                 LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                                WHERE u.UserTypeId <> 3
                                 ORDER BY DisplayName
                                 ";
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -146,6 +147,27 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public void DeactivateUserProfile(UserProfile userProfile)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using(SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        Update UserProfile
+                        SET UserTypeId = 3
+                        WHERE Id = @id
+                        ";
+                    
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
+        }
+
 
 
     }
