@@ -41,21 +41,22 @@
                     
                 </div>
                 <div class="form-group">
-                    <label asp-for="ImageLocation" class="control-label"></label>
-                    <input asp-for="ImageLocation" class="form-control" />
-                    <span asp-validation-for="ImageLocation" class="text-danger"></span>
+                    @*<label asp-for="ImageLocation" type="hidden" class="control-label"></label>*@
+                    <input asp-for="ImageLocation" type="hidden" class="form-control"/>
+                    @*<span asp-validation-for="ImageLocation" class="text-danger"></span>*@
+                       
                 </div>
                 <div class="form-group">
                     <input asp-for="UserTypeId" type="hidden" value="2" />
                 </div>
                 <div class="form-group">
-                    <input asp-for="FullName" type="hidden" class="control-label"/>
-                    
+                    <input asp-for="FullName" type="hidden" class="control-label" />
+
                 </div>
                 <div class="form-group">
                     <input type="submit" value="Create" class="btn btn-primary" />
                 </div>
-            </form>
+</form>
         </div>
     </div>
 </div>

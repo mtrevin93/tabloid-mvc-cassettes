@@ -73,7 +73,7 @@ namespace TabloidMVC.Repositories
                     cmd.Parameters.AddWithValue("@lastName", userProfile.LastName);
                     cmd.Parameters.AddWithValue("@email", userProfile.Email);
                     cmd.Parameters.AddWithValue("@createDateTime", userProfile.CreateDateTime);
-                    cmd.Parameters.AddWithValue("@imageLocation", userProfile.ImageLocation);
+                    cmd.Parameters.AddWithValue("@imageLocation", DbUtils.ValueOrDBNull(userProfile.ImageLocation));
                     cmd.Parameters.AddWithValue("@userTypeId", userProfile.UserTypeId);
 
                     int id = (int)cmd.ExecuteScalar();
