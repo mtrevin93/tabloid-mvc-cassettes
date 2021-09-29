@@ -65,7 +65,8 @@ namespace TabloidMVC.Controllers
             PostDetailsViewModel vm = new PostDetailsViewModel { 
                 Post = post, 
                 CurrentUserId = userId,
-                PostId = id
+                PostId = id,
+                Category = _categoryRepository.GetCategoryById(post.CategoryId)
             };
 
             return View(vm);
@@ -90,13 +91,13 @@ namespace TabloidMVC.Controllers
                 _postRepository.Add(vm.Post);
 
                 return RedirectToAction("Details", new { id = vm.Post.Id });
-            } 
+        } 
             catch(Exception ex)
             {
                 vm.CategoryOptions = _categoryRepository.GetAll();
                 return View(vm);
-            }
-        }
+    }
+}
         public IActionResult Delete(Post post)
         {
             try
@@ -114,24 +115,31 @@ namespace TabloidMVC.Controllers
         {
             var post = _postRepository.GetPublishedPostById(id);
 
-            //Dependency - categorybyID from categoryrepo
-            //post.Category = _categoryRepository.GetById(post.CategoryId);
-                
-            return View(post);
+            post.Category = _categoryRepository.GetCategoryById(post.CategoryId);
+            var categories = _categoryRepository.GetAll();
+
+            var vm = new PostDetailsViewModel();
+
+            vm.Categories = categories;
+            vm.Post = post;
+
+            return View(vm);
         }
         [HttpPost]
-        public IActionResult Edit(Post post)
+        public IActionResult Edit(PostDetailsViewModel postDetailsViewModel)
         {
-            try
-            {
+            var post = postDetailsViewModel.Post;
+
+            //try
+            //{
                 _postRepository.Update(post);
 
                 return RedirectToAction("Details", new { id = post.Id } );
-        }
-            catch (Exception ex)
-            {
-                return View(post);
-            }
+            //}
+            //catch (Exception ex)
+            //{
+            //    return View(postDetailsViewModel);
+            //}
         }
 
         private int GetCurrentUserProfileId()

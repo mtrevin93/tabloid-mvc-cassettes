@@ -29,9 +29,7 @@
     </div>
 </div>
 
-<div>
-    <btn class="btn btn-primary mx-2" onClick="@Html.ActionLink("Back To List", "Index", new { postId = Model.PostId })">Cancel</btn>
-</div>
+@Html.ActionLink("Back To List", "Index", new { postId = Model.PostId })
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
