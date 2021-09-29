@@ -20,6 +20,42 @@
                 <a asp-controller="Comment" asp-action="Create" asp-route-postId="@Model.PostId"
                    class="btn btn-outline-primary mx-1" title="Comment">
                     <i class="fas fa-comment"></i>
+    <div class="post">
+        <section class="px-3">
+            <div class="row justify-content-between">
+                <h1 class="text-secondary">@Model.Post.Title</h1>
+                <h1 class="text-black-50">@Model.Post.Category.Name</h1>
+            </div>
+            <div class="row">
+                    <h4>Tag(s): </h4>
+                    <ul>
+                        @foreach (PostTag postTag in Model.PostTag)
+                        {
+
+                            <li> @Html.DisplayFor(modelItem => postTag.Tag.Name) </li>
+
+                        }
+                    </ul>
+            </div>
+            <div class="row justify-content-between">
+                <p class="text-secondary">Written by @Model.Post.UserProfile.DisplayName</p>
+                <p class="text-black-50">Published on @Html.DisplayFor(model => model.Post.PublishDateTime)</p>
+            </div>
+            @*Create Comment Form*@
+        <div class="row">
+            <a asp-controller="Comment" asp-action="Create" asp-route-postId="@Model.PostId"
+               class="btn btn-outline-primary mx-1" title="Comment">
+                <i class="fas fa-comment"></i>
+            </a>
+            <a asp-controller="Comment" asp-action="Index" asp-route-postId="@Model.PostId"
+               class="btn btn-outline-primary mx-1" title="Comment">
+                <i class="fas fa-comments"></i>
+            </a>
+            @*Check for whether user has delete permissions(post was made by current user)*@
+            @if (Model.Post.UserProfileId == Model.CurrentUserId)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
                 </a>
                 <a asp-controller="Comment" asp-action="Index" asp-route-postId="@Model.PostId"
                    class="btn btn-outline-primary mx-1" title="Comment">
@@ -47,9 +83,16 @@
                         <i class="fas fa-trash"></i>
                     </a>
                 }
-            </div>
-            </section>
         <hr />
+                <a asp-controller="PostTag" asp-action="Create" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="PostTag">
+                    Manage Tags
+                </a>
+                <a asp-controller="PostTag" asp-action="Delete" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="PostTag">
+                    Delete Tags
+                </a>
+            }
+        </div>
+        </section>
         @if (!string.IsNullOrWhiteSpace(Model.Post.ImageLocation))
         {
             <section class="row justify-content-center">
@@ -63,4 +106,4 @@
         </section>
     </div>
     <a asp-action="Index">Back to List</a>
-</div>
+    </div>
