@@ -32,17 +32,23 @@ namespace TabloidMVC.Controllers
         }
 
 
-        public ActionResult Create(Subscription subscription)
+        public ActionResult Create(int postUserId)
         {
             int subscriber = GetCurrentUserId();
             try
             {
-                _subscriptionRepo.AddSubscription(subscription, subscriber);
-                return RedirectToAction(nameof(Index));
+                Subscription subscription = new Subscription
+                {
+                    ProviderUserProfileId = postUserId,
+                    SubscriberUserProfileId = subscriber,
+                    BeginDateTime = DateTime.Now
+                };
+                _subscriptionRepo.AddSubscription(subscription);
+                return RedirectToAction("Details", "Post", new { id = postUserId });
             }
             catch
             {
-                return View();
+                return View("Index", "Home");
             }
         }
 

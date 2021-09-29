@@ -17,13 +17,15 @@ namespace TabloidMVC.Controllers
         private readonly ICategoryRepository _categoryRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IPostTagRepository _postTagRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ICommentRepository commentRepository, IPostTagRepository postTagRepository)
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ICommentRepository commentRepository, IPostTagRepository postTagRepository, ISubscriptionRepository subscriptionRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
             _commentRepository = commentRepository;
             _postTagRepository = postTagRepository;
+            _subscriptionRepository = subscriptionRepository;
         }
 
         public IActionResult Index()
@@ -144,6 +146,28 @@ namespace TabloidMVC.Controllers
                 return View(postDetailsViewModel);
             }
         }
+
+
+        public ActionResult Subscribe(int postUserId)
+        {
+            int subscriber = GetCurrentUserProfileId();
+            try
+            {
+                Subscription subscription = new Subscription
+                {
+                    ProviderUserProfileId = postUserId,
+                    SubscriberUserProfileId = subscriber,
+                    BeginDateTime = DateTime.Now
+                };
+                _subscriptionRepository.AddSubscription(subscription);
+                return RedirectToAction("Details", "Post", new { id = postUserId });
+            }
+            catch
+            {
+                return View("Index", "Home");
+            }
+        }
+
 
         private int GetCurrentUserProfileId()
         {

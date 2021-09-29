@@ -14,5 +14,6 @@ namespace TabloidMVC.Models
         public DateTime EndDateTime { get; set; }
 
         public UserProfile UserProfile { get; set; }
+
     }
 }

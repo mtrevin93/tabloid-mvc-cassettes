@@ -13,7 +13,7 @@ namespace TabloidMVC.Repositories
     {
         public SubscriptionRepository(IConfiguration config) : base(config) { }
 
-        public void AddSubscription(Subscription subscription, int subscriber)
+        public void AddSubscription(Subscription subscription)
         {
             using (SqlConnection conn = Connection)
             {
@@ -24,12 +24,12 @@ namespace TabloidMVC.Repositories
                     cmd.CommandText = @"INSERT INTO Subscription (SubscriberUserProfileId, ProviderUserProfileId, BeginDateTime)
                                         OUTPUT INSERTED.ID
                                         VALUES (@subscriber, @author, @beginDate, @endDate)";
-                    cmd.Parameters.AddWithValue("@subscriber", subscriber);
+                    cmd.Parameters.AddWithValue("@subscriber", subscription.SubscriberUserProfileId);
                     cmd.Parameters.AddWithValue("@author", subscription.ProviderUserProfileId);
                     cmd.Parameters.AddWithValue("@beginDate", subscription.BeginDateTime);
-                    cmd.Parameters.AddWithValue("@endDate", DbUtils.ValueOrDBNull(subscription.EndDateTime));
+                    cmd.Parameters.AddWithValue("endDate", DbUtils.ValueOrDBNull(subscription.EndDateTime));
 
-                    subscription.Id = (int)cmd.ExecuteScalar();
+                   subscription.Id = (int)cmd.ExecuteScalar();
                 }
             }
         }
