@@ -28,6 +28,12 @@ namespace TabloidMVC.Controllers
             return View(userProfiles);
         }
 
+        public ActionResult DIndex()
+        {
+            List<UserProfile> userProfiles = _userProfileRepository.GetDeactivatedUsers();
+            return View(userProfiles);
+        }
+
         // GET: UserProfileController/Details/5
         public ActionResult Details(int id)
         {
@@ -61,33 +67,22 @@ namespace TabloidMVC.Controllers
         }
 
         // GET: UserProfileController/Edit/5
-        public ActionResult Edit(int id)
+        public ActionResult Reactivate (int id)
         {
-            return View();
-        }
-
-        // POST: UserProfileController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
+            UserProfile userProfile = _userProfileRepository.GetUserProfileById(id);
             try
             {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: UserProfileController/Delete/5
-        public ActionResult Delete(UserProfile userProfile)
-        {
-            try
-            {
-                _userProfileRepository.DeactivateUserProfile(userProfile);
-                return RedirectToAction("Index");
+                if (userProfile.UserTypeId == 4)
+                {
+                    _userProfileRepository.ReactivateAuthorProfile(userProfile);
+                    return RedirectToAction("DIndex");
+                }
+                if (userProfile.UserTypeId == 3)
+                {
+                    _userProfileRepository.ReactivateAdminProfile(userProfile);
+                    return RedirectToAction("DIndex");
+                }
+                return StatusCode(404);
             }
             catch (Exception ex)
             {
@@ -97,6 +92,38 @@ namespace TabloidMVC.Controllers
         }
 
         
+
+        // GET: UserProfileController/Delete/5
+        public ActionResult Delete(int id)
+        {
+            UserProfile userProfile = _userProfileRepository.GetUserProfileById(id);
+            try
+            {
+                if (userProfile.UserTypeId == 2)
+                {
+                    _userProfileRepository.DeactivateAuthorProfile(userProfile);
+                    return RedirectToAction("Index");
+                }
+                if (userProfile.UserTypeId == 1)
+                {
+                    _userProfileRepository.DeactivateAdminProfile(userProfile);
+                    return RedirectToAction("Index");
+                }
+                return StatusCode(404);
+            }
+            catch (Exception ex)
+            {
+
+                return View(userProfile);
+            }
+
+
+
+
+
+        }
+
+
 
 
     }

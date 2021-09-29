@@ -55,6 +55,44 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         public List<UserProfile> GetAllUsers()
         {
             using (SqlConnection conn = Connection)
@@ -69,7 +107,7 @@ namespace TabloidMVC.Repositories
                                     ut.[Name] AS UserTypeName
                                 FROM UserProfile u
                                 LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                                WHERE u.UserTypeId <> 3
+                                WHERE u.UserTypeId <> 3 AND u.UserTypeId <> 4
                                 ORDER BY DisplayName
                                 ";
                     using (SqlDataReader reader = cmd.ExecuteReader())
@@ -100,6 +138,50 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public List<UserProfile> GetDeactivatedUsers()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                List<UserProfile> users = new List<UserProfile>();
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                                SELECT u.id, u.FirstName, u.LastName, u.DisplayName, u.Email,
+                                    u.CreateDateTime, u.ImageLocation, u.UserTypeId,
+                                    ut.[Name] AS UserTypeName
+                                FROM UserProfile u
+                                LEFT JOIN UserType ut ON u.UserTypeId = ut.id
+                                WHERE u.UserTypeId = 3 OR u.UserTypeId = 4
+                                ORDER BY DisplayName
+                                ";
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            UserProfile userProfile = new UserProfile
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Email = reader.GetString(reader.GetOrdinal("Email")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                DisplayName = reader.GetString(reader.GetOrdinal("DisplayName")),
+                                CreateDateTime = reader.GetDateTime(reader.GetOrdinal("CreateDateTime")),
+                                ImageLocation = DbUtils.GetNullableString(reader, "ImageLocation"),
+                                UserTypeId = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                UserType = new UserType()
+                                {
+                                    Id = reader.GetInt32(reader.GetOrdinal("UserTypeId")),
+                                    Name = reader.GetString(reader.GetOrdinal("UserTypeName"))
+                                }
+                            };
+                            users.Add(userProfile);
+                        }
+                    }
+                    return users;
+                }
+            }
+        }
 
         public UserProfile GetUserProfileById(int id)
         {
@@ -148,7 +230,7 @@ namespace TabloidMVC.Repositories
             }
         }
 
-        public void DeactivateUserProfile(UserProfile userProfile)
+        public void DeactivateAdminProfile(UserProfile userProfile)
         {
             using (SqlConnection conn = Connection)
             {
@@ -167,7 +249,65 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+        public void DeactivateAuthorProfile(UserProfile userProfile)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        Update UserProfile
+                        SET UserTypeId = 4
+                        WHERE Id = @id
+                        ";
 
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
+        }
+
+        public void ReactivateAuthorProfile(UserProfile userProfile)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        Update UserProfile
+                        SET UserTypeId = 2
+                        WHERE Id = @id
+                        ";
+
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
+        }
+
+        public void ReactivateAdminProfile(UserProfile userProfile)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        Update UserProfile
+                        SET UserTypeId = 1
+                        WHERE Id = @id
+                        ";
+
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
+                    cmd.ExecuteNonQuery();
+
+                }
+            }
+        }
 
 
     }
