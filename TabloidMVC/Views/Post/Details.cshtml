@@ -63,4 +63,8 @@
     <a asp-controller="PostTag" asp-action="Delete" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="PostTag">
         Delete Tags
     </a>
+    <a asp-controller="Subscription" asp-action="Create" 
+       class="btn btn-outline-primary mx-1" title="Subscribe" onclick="return confirm(`Are you sure you want subscribe?`);">
+        <i class="fas fa-trash"></i>
+    </a>
 </div>
