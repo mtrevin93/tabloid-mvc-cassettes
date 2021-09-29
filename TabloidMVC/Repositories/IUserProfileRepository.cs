@@ -6,33 +6,24 @@ namespace TabloidMVC.Repositories
     public interface IUserProfileRepository
     {
         UserProfile GetByEmail(string email);
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        List<UserProfile> GetAllUsers();
+        public void AddUser(UserProfile userProfile);
 
-        List<UserType> GetAllUserTypes();
-        List<UserProfile> GetDeactivatedUsers();
-        UserProfile GetUserProfileById(int id);
+        public List<UserProfile> GetAllUsers();
+        public List<UserProfile> GetDeactivatedUsers();
 
-        void DeactivateAuthorProfile(UserProfile userProfile);
-        void DeactivateAdminProfile(UserProfile userProfile);
+        public UserProfile GetUserProfileById(int id);
 
-        void ReactivateAuthorProfile(UserProfile userProfile);
-        void ReactivateAdminProfile(UserProfile userProfile);
-        void Update(UserProfile userProfile);
+        public void DeactivateAdminProfile(UserProfile userProfile);
+
+        public void DeactivateAuthorProfile(UserProfile userProfile);
+
+        public void ReactivateAuthorProfile(UserProfile userProfile);
+
+        public void ReactivateAdminProfile(UserProfile userProfile);
+
+        public void Update(UserProfile userProfile);
+
+        public List<UserType> GetAllUserTypes();
 
     }
 }
