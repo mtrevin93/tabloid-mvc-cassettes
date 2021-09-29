@@ -15,13 +15,13 @@ namespace TabloidMVC.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly ICommentRepository _commentRepository;
+        private readonly IReactionRepository _reactionRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ICommentRepository commentRepository)
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, IReactionRepository reactionRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
-            _commentRepository = commentRepository;
+            _reactionRepository = reactionRepository;
         }
 
         public IActionResult Index()
@@ -62,11 +62,12 @@ namespace TabloidMVC.Controllers
             }
             //Use postdetails view model to pass current user id
 
-            PostDetailsViewModel vm = new PostDetailsViewModel { 
-                Post = post, 
+            PostDetailsViewModel vm = new PostDetailsViewModel {
+                Post = post,
                 CurrentUserId = userId,
                 PostId = id,
-                Category = _categoryRepository.GetCategoryById(post.CategoryId)
+                Category = _categoryRepository.GetCategoryById(post.CategoryId),
+                Reactions = _reactionRepository.Get()
             };
 
             return View(vm);
