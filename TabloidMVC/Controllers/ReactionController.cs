@@ -21,16 +21,6 @@ namespace TabloidMVC.Controllers
             _reactionRepository = reactionRepository;
         }
         // GET: ReactionController
-        public ActionResult Index()
-        {
-            return View();
-        }
-
-        // GET: ReactionController/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
 
         // GET: ReactionController/Create
         public ActionResult Create(int postId, int reactionId)
@@ -42,47 +32,6 @@ namespace TabloidMVC.Controllers
             return RedirectToAction("Details", "Post", new  { id = postId });
         }
 
-        // GET: ReactionController/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: ReactionController/Edit/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: ReactionController/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: ReactionController/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
-        {
-            try
-            {
-                return RedirectToAction(nameof(Index));
-            }
-            catch
-            {
-                return View();
-            }
-        }
         private int GetCurrentUserProfileId()
         {
             string id = User.FindFirstValue(ClaimTypes.NameIdentifier);
