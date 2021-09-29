@@ -29,19 +29,28 @@
                 <p class="text-secondary">Written by @Model.Post.UserProfile.DisplayName</p>
                 <p class="text-black-50">Published on @Html.DisplayFor(model => model.Post.PublishDateTime)</p>
             </div>
+            @*Create Comment Form*@
+        <div class="row">
+            <a asp-controller="Comment" asp-action="Create" asp-route-postId="@Model.PostId"
+               class="btn btn-outline-primary mx-1" title="Comment">
+                <i class="fas fa-comment"></i>
+            </a>
+            <a asp-controller="Comment" asp-action="Index" asp-route-postId="@Model.PostId"
+               class="btn btn-outline-primary mx-1" title="Comment">
+                <i class="fas fa-comments"></i>
+            </a>
             @*Check for whether user has delete permissions(post was made by current user)*@
             @if (Model.Post.UserProfileId == Model.CurrentUserId)
             {
-                <div class="row">
-                    <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
-                        <i class="fas fa-pencil-alt"></i>
-                    </a>
-                    <a asp-action="Delete" asp-route-id="@Model.Post.Id"
-                       class="btn btn-outline-primary mx-1" title="Delete" onclick="return confirm(`Are you sure you want to delete this post?`);">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                </div>
+                <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                    <i class="fas fa-pencil-alt"></i>
+                </a>
+                <a asp-action="Delete" asp-route-id="@Model.Post.Id"
+                   class="btn btn-outline-primary mx-1" title="Delete" onclick="return confirm(`Are you sure you want to delete this post?`);">
+                    <i class="fas fa-trash"></i>
+                </a>
             }
+        </div>
         </section>
         <hr />
         @if (!string.IsNullOrWhiteSpace(Model.Post.ImageLocation))
