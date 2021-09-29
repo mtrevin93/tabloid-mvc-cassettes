@@ -34,6 +34,8 @@ namespace TabloidMVC.Models
         [DisplayName("Author")]
         public int UserProfileId { get; set; }
         public UserProfile UserProfile { get; set; }
+            
+        public List<PostTag> PostTags { get; set; }
         public List<Comment> Comments { get; set; }
         public Comment Comment;
     }
