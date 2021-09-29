@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
+using TabloidMVC.Models.ViewModels;
 
 namespace TabloidMVC.Controllers
 {
@@ -45,14 +46,39 @@ namespace TabloidMVC.Controllers
             return View(user);
         }
 
-        // GET: UserProfileController/Create
-        public ActionResult Create()
+        // GET: UserProfileController/Edit/5
+        public ActionResult Edit(int id)
         {
-            return View();
+
+            UserProfile user = _userProfileRepository.GetUserProfileById(id);
+            List<UserType> userTypes = _userProfileRepository.GetAllUserTypes();
+            UserTypeFormViewModel vm = new UserTypeFormViewModel
+            {
+                UserProfile = user,
+                UserTypes = userTypes
+            };
+            return View(vm);
         }
 
-        // POST: UserProfileController/Create
+        // POST: UserProfile/Edit/5
         [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Edit(int id, UserProfile userProfile)
+        {
+            try
+            {
+                _userProfileRepository.Update(userProfile);
+                return RedirectToAction("Index");
+            }
+            catch (Exception ex)
+            {
+                return View(userProfile);
+            }
+        }
+
+
+       // POST: UserProfileController/Create
+       [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult Create(IFormCollection collection)
         {

@@ -22,6 +22,8 @@ namespace TabloidMVC.Repositories
         
         
         List<UserProfile> GetAllUsers();
+
+        List<UserType> GetAllUserTypes();
         List<UserProfile> GetDeactivatedUsers();
         UserProfile GetUserProfileById(int id);
 
@@ -30,6 +32,7 @@ namespace TabloidMVC.Repositories
 
         void ReactivateAuthorProfile(UserProfile userProfile);
         void ReactivateAdminProfile(UserProfile userProfile);
+        void Update(UserProfile userProfile);
 
     }
 }

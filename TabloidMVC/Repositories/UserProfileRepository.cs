@@ -55,44 +55,44 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
         public List<UserProfile> GetAllUsers()
         {
             using (SqlConnection conn = Connection)
@@ -200,9 +200,9 @@ namespace TabloidMVC.Repositories
                         ";
                     cmd.Parameters.AddWithValue("@id", id);
                     UserProfile userProfile = null;
-                    using(SqlDataReader reader = cmd.ExecuteReader())
+                    using (SqlDataReader reader = cmd.ExecuteReader())
                     {
-                        while(reader.Read())
+                        while (reader.Read())
                         {
                             if (userProfile == null)
                             {
@@ -235,14 +235,14 @@ namespace TabloidMVC.Repositories
             using (SqlConnection conn = Connection)
             {
                 conn.Open();
-                using(SqlCommand cmd = conn.CreateCommand())
+                using (SqlCommand cmd = conn.CreateCommand())
                 {
                     cmd.CommandText = @"
                         Update UserProfile
                         SET UserTypeId = 3
                         WHERE Id = @id
                         ";
-                    
+
                     cmd.Parameters.AddWithValue("@id", userProfile.Id);
                     cmd.ExecuteNonQuery();
 
@@ -309,6 +309,58 @@ namespace TabloidMVC.Repositories
             }
         }
 
+        public void Update(UserProfile userProfile)
+        {
+            using(SqlConnection conn = Connection)
+            {
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                        Update UserProfile
+                        SET
+                            UserTypeId = @userTypeId
+                        WHERE Id = @id";
+
+                    cmd.Parameters.AddWithValue("@userTypeId", userProfile.UserTypeId);
+                    cmd.Parameters.AddWithValue("@id", userProfile.Id);
+
+                    cmd.ExecuteNonQuery();
+                }
+            }
+        }
+
+        public List <UserType> GetAllUserTypes()
+        {
+            using (SqlConnection conn = Connection)
+            {
+                List<UserType> UserTypes = new List<UserType>();
+                conn.Open();
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"
+                                SELECT Id , Name 
+                                FROM UserType
+                                ";
+                    using (SqlDataReader reader = cmd.ExecuteReader())
+                    {
+                        List<UserType> userTypes = new List<UserType>();
+                        
+                        while (reader.Read())
+                        {
+                            UserType userType = new UserType()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                                Name = reader.GetString(reader.GetOrdinal("Name")),
+                                
+                            };
+                            userTypes.Add(userType);
+                        }
+                    return userTypes;
+                    }
+                }
+            }
+        }
 
     }
 }
