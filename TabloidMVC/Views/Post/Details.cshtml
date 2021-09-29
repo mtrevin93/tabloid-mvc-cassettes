@@ -5,21 +5,6 @@
 }
 
 <div class="container pt-5">
-    <div class="post"
-            <section class="px-3">
-                <div class="row justify-content-between">
-                    <h1 class="text-secondary">@Model.Post.Title</h1>
-                    <h1 class="text-black-50">@Model.Post.Category.Name</h1>
-                </div>
-                <div class="row justify-content-between">
-                    <p class="text-secondary">Written by @Model.Post.UserProfile.DisplayName</p>
-                    <p class="text-black-50">Published on @Html.DisplayFor(model => model.Post.PublishDateTime)</p>
-                </div>
-                @*Create Comment Form*@
-            <div class="row">
-                <a asp-controller="Comment" asp-action="Create" asp-route-postId="@Model.PostId"
-                   class="btn btn-outline-primary mx-1" title="Comment">
-                    <i class="fas fa-comment"></i>
     <div class="post">
         <section class="px-3">
             <div class="row justify-content-between">
@@ -27,15 +12,15 @@
                 <h1 class="text-black-50">@Model.Post.Category.Name</h1>
             </div>
             <div class="row">
-                    <h4>Tag(s): </h4>
-                    <ul>
-                        @foreach (PostTag postTag in Model.PostTag)
-                        {
+                <h4>Tag(s): </h4>
+                <ul>
+                    @foreach (PostTag postTag in Model.PostTag)
+                    {
 
-                            <li> @Html.DisplayFor(modelItem => postTag.Tag.Name) </li>
+                        <li> @Html.DisplayFor(modelItem => postTag.Tag.Name) </li>
 
-                        }
-                    </ul>
+                    }
+                </ul>
             </div>
             <div class="row justify-content-between">
                 <p class="text-secondary">Written by @Model.Post.UserProfile.DisplayName</p>
@@ -51,39 +36,27 @@
                class="btn btn-outline-primary mx-1" title="Comment">
                 <i class="fas fa-comments"></i>
             </a>
+            <section class="px-3 align-content-end">
+                <div class="col justify-content-between align-content-end">
+                    @foreach (var item in Model.Reactions)
+                    {
+                        <a asp-action="Create" asp-controller="Reaction" asp-route-postId="@Model.Post.Id" asp-route-reactionId="@item.Id" class="btn btn-outline-primary mx-1" title="@item.Name">
+                            <img src="@item.ImageLocation" height="18" width="16" />
+                            <p style="position:absolute" height="4" , width="4">@item.TimesUsed</p>
+                        </a>
+                    }
+                </div>
+            </section>
             @*Check for whether user has delete permissions(post was made by current user)*@
             @if (Model.Post.UserProfileId == Model.CurrentUserId)
             {
                 <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
                     <i class="fas fa-pencil-alt"></i>
                 </a>
-                <a asp-controller="Comment" asp-action="Index" asp-route-postId="@Model.PostId"
-                   class="btn btn-outline-primary mx-1" title="Comment">
-                    <i class="fas fa-comments"></i>
+                <a asp-action="Delete" asp-route-id="@Model.Post.Id"
+                   class="btn btn-outline-primary mx-1" title="Delete" onclick="return confirm(`Are you sure you want to delete this post?`);">
+                    <i class="fas fa-trash"></i>
                 </a>
-            <section class="px-3 align-content-end">
-                <div class="col justify-content-between align-content-end">
-                    @foreach (var item in Model.Reactions)
-                    {
-                        <a asp-action="Create" asp-controller="Reaction" asp-route-postId="@Model.Post.Id" asp-route-reactionId="@item.Id" class="btn btn-outline-primary mx-1" title="@item.Name">
-                            <img src="@item.ImageLocation" height="18" width="16"/>
-                            <p style="position:absolute" height="4", width="4">@item.TimesUsed</p>
-                        </a>
-                    }
-                </div>
-            </section>
-                @*Check for whether user has delete permissions(post was made by current user)*@
-                @if (Model.Post.UserProfileId == Model.CurrentUserId)
-                {
-                    <a asp-action="Edit" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
-                        <i class="fas fa-pencil-alt"></i>
-                    </a>
-                    <a asp-action="Delete" asp-route-postId="@Model.Post.Id"
-                       class="btn btn-outline-primary mx-1" title="Delete" onclick="return confirm(`Are you sure you want to delete this post?`);">
-                        <i class="fas fa-trash"></i>
-                    </a>
-                }
-        <hr />
                 <a asp-controller="PostTag" asp-action="Create" asp-route-id="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="PostTag">
                     Manage Tags
                 </a>
@@ -93,6 +66,7 @@
             }
         </div>
         </section>
+        <hr />
         @if (!string.IsNullOrWhiteSpace(Model.Post.ImageLocation))
         {
             <section class="row justify-content-center">
@@ -106,4 +80,4 @@
         </section>
     </div>
     <a asp-action="Index">Back to List</a>
-    </div>
+</div>

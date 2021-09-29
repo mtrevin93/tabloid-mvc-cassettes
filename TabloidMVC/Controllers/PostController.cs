@@ -17,21 +17,15 @@ namespace TabloidMVC.Controllers
         private readonly ICategoryRepository _categoryRepository;
         private readonly IReactionRepository _reactionRepository;
         private readonly ICommentRepository _commentRepository;
-
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, IReactionRepository reactionRepository)
-        {
-            _postRepository = postRepository;
-            _categoryRepository = categoryRepository;
-            _reactionRepository = reactionRepository;
-            _postTagRepository = postTagRepository;
-
+        private readonly IPostTagRepository _postTagRepository;
         public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, 
-        ICommentRepository commentRepository, IPostTagRepository postTagRepository, IPostTagRepository postTagRepository)
+        ICommentRepository commentRepository, IPostTagRepository postTagRepository, IReactionRepository reactionRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
             _commentRepository = commentRepository;
             _postTagRepository = postTagRepository;
+            _reactionRepository = reactionRepository;
         }
 
         public IActionResult Index()
@@ -77,11 +71,8 @@ namespace TabloidMVC.Controllers
                 CurrentUserId = userId,
                 PostId = id,
                 Category = _categoryRepository.GetCategoryById(post.CategoryId),
-<<<<<<< HEAD
-                Reactions = _reactionRepository.Get()
-=======
+                Reactions = _reactionRepository.Get(),
                 PostTag = _postTagRepository.GetAllPostTags(id)
->>>>>>> main
             };
 
             foreach(var reaction in vm.Reactions)

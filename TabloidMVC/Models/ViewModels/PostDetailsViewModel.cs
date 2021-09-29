@@ -12,10 +12,7 @@ namespace TabloidMVC.Models.ViewModels
         public int PostId { get; set; }
         public Category Category { get; set; }
         public List<Category> Categories { get; set; }
-<<<<<<< HEAD
         public List<Reaction> Reactions { get; set; }
-=======
         public List<PostTag> PostTag { get; set; }
->>>>>>> main
     }
 }
