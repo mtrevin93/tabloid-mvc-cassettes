@@ -6,6 +6,8 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using TabloidMVC.Models;
 using TabloidMVC.Repositories;
+using Microsoft.AspNetCore.Http;
+using System;
 
 namespace TabloidMVC.Controllers
 {
@@ -48,6 +50,26 @@ namespace TabloidMVC.Controllers
                 new ClaimsPrincipal(claimsIdentity));
 
             return RedirectToAction("Index", "Home");
+        }
+
+        public ActionResult Register()
+        {
+            return View();
+        }
+
+        // POST: Controller/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Register(IFormCollection collection)
+        {
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
         }
 
         public async Task<IActionResult> Logout()
