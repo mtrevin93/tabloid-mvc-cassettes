@@ -46,7 +46,7 @@
                     @*Check for whether user has delete permissions(post was made by current user)*@
                     @if (item.Author.Id == Model.CurrentUserId)
                     {
-                        <a asp-action="EditComment" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                        <a asp-action="EditComment" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="EditComment">
                             <i class="fas fa-pencil-alt"></i>
                         </a>
                         <a asp-action="DeleteComment" asp-route-id="@item.Id"

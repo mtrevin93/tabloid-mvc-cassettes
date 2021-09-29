@@ -319,7 +319,8 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
                               LEFT JOIN Comment cm ON p.Id = cm.PostId
                               LEFT JOIN UserProfile up ON cm.UserProfileId = up.Id
-                        WHERE p.id = @id";
+                        WHERE p.id = @id
+                        ORDER BY cm.CreateDateTime DESC";
 
                     cmd.Parameters.AddWithValue("@id", postId);
                     var reader = cmd.ExecuteReader();

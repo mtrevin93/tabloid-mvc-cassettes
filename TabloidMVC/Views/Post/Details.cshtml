@@ -17,11 +17,11 @@
             </div>
             @*Create Comment Form*@
         <div class="row">
-            <a asp-action="CreateComment" asp-route-id="@Model.Post.Id"
+            <a asp-controller="Comment" asp-action="Create" asp-route-postId="@Model.PostId"
                class="btn btn-outline-primary mx-1" title="Comment">
                 <i class="fas fa-comment"></i>
             </a>
-            <a asp-action="CommentList" asp-route-id="@Model.Post.Id"
+            <a asp-controller="Comment" asp-action="Index" asp-route-id="@Model.Post.Id"
                class="btn btn-outline-primary mx-1" title="Comment">
                 <i class="fas fa-comments"></i>
             </a>

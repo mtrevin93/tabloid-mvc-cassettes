@@ -62,7 +62,11 @@ namespace TabloidMVC.Controllers
             }
             //Use postdetails view model to pass current user id
 
-            PostDetailsViewModel vm = new PostDetailsViewModel { Post = post, CurrentUserId = userId };
+            PostDetailsViewModel vm = new PostDetailsViewModel { 
+                Post = post, 
+                CurrentUserId = userId,
+                PostId = id
+            };
 
             return View(vm);
         }
@@ -103,6 +107,7 @@ namespace TabloidMVC.Controllers
             return View(comment);
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public IActionResult CreateComment(Comment comment)
         {
             try
