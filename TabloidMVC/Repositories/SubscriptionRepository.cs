@@ -84,5 +84,37 @@ namespace TabloidMVC.Repositories
                 }
             }
         }
+
+        public List<Subscription> GetActiveSubscriptions(int currentUser)
+        {
+            using (SqlConnection conn = Connection)
+            {
+                conn.Open();
+
+                using (SqlCommand cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = @"SELECT * FROM Subscription 
+                                       WHERE SubscriberUserProfileId = @currentUser AND EndDateTime is Null";
+
+                    cmd.Parameters.AddWithValue("@currentUser", currentUser);
+
+                    SqlDataReader reader = cmd.ExecuteReader();
+
+                    List<Subscription> subscription = new List<Subscription>();
+
+                    while(reader.Read())
+                    {
+                        subscription.Add(new Subscription
+                        {
+                            Id = reader.GetInt32(reader.GetOrdinal("Id")),
+                            ProviderUserProfileId = reader.GetInt32(reader.GetOrdinal("ProviderUserProfileId"))
+                        });
+                    }
+                    reader.Close();
+                    return subscription;
+                }
+            }
+
+        }
     }
 }

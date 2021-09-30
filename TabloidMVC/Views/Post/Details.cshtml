@@ -69,11 +69,19 @@
         </section>
     </div>
     <a asp-action="Index">Back to List</a> |
-    @if(Model.CurrentUserId != Model.Post.UserProfileId)
+    @if (Model.CurrentUserId != Model.Post.UserProfileId)
     {
-        if(Model.Subscription.EndDateTime is Null)
-        @Html.ActionLink("Subscribe", "Subscribe", Model, null) 
-        @Html.ActionLink("Unsubscribe", "Unsubscribe", Model);
+        if (Model.Subscription != null)
+        {
+            <a asp-action="Unsubscribe" asp-route-subscriptionId="@Model.Subscription.Id" asp-route-postId="@Model.Post.Id" class="btn btn-outline-primary mx-1" title="Edit">
+                <i class="fas fa-pencil-alt"></i>
+            </a>
+           @* @Html.ActionLink("Unsubscribe", "Unsubscribe", Model.Subscription.Id);*@
+        }
+        else
+        {
+            @Html.ActionLink("Subscribe", "Subscribe", Model, null)
+        }
     }
 </div>
 

@@ -7,6 +7,8 @@ using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TabloidMVC.Controllers
 {
@@ -54,6 +56,7 @@ namespace TabloidMVC.Controllers
         {
             int userId = GetCurrentUserProfileId();
             
+            
             //Gets published or unpublished post by user
             var post = _postRepository.GetPublishedPostById(id);
             if (post == null)
@@ -64,6 +67,10 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
+
+            List<Subscription> subscriptions = _subscriptionRepository.GetActiveSubscriptions(userId);
+
+            var subscription = subscriptions.FirstOrDefault(s => s.ProviderUserProfileId == post.UserProfileId);
             //Use postdetails view model to pass current user id
 
             PostDetailsViewModel vm = new PostDetailsViewModel { 
@@ -71,7 +78,8 @@ namespace TabloidMVC.Controllers
                 CurrentUserId = userId,
                 PostId = id,
                 Category = _categoryRepository.GetCategoryById(post.CategoryId),
-                PostTag = _postTagRepository.GetAllPostTags(id)
+                PostTag = _postTagRepository.GetAllPostTags(id),
+                Subscription = subscription
             };
 
             return View(vm);
@@ -169,14 +177,14 @@ namespace TabloidMVC.Controllers
             }
         }
 
-        public ActionResult Unsubscribe(PostDetailsViewModel pd)
+        public ActionResult Unsubscribe(int subscriptionId, int postId)
         {
             int subscriber = GetCurrentUserProfileId();
-            Post post = _postRepository.GetPublishedPostById(pd.PostId);
+/*            Post post = _postRepository.GetPublishedPostById(pd.PostId);
 
-            Subscription subscription = _subscriptionRepository.GetSubscriptionById(subscriber, post.UserProfileId);
-            _subscriptionRepository.Unsubscribe(subscription.Id);
-            return RedirectToAction("Details", new { id = post.Id });
+            Subscription subscription = _subscriptionRepository.GetSubscriptionById(subscriber, post.UserProfileId);*/
+            _subscriptionRepository.Unsubscribe(subscriptionId);
+            return RedirectToAction("Details", new { id = postId });
         }
 
 

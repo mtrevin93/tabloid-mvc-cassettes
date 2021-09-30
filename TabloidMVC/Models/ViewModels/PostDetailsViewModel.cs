@@ -15,5 +15,18 @@ namespace TabloidMVC.Models.ViewModels
         public List<PostTag> PostTag { get; set; }
 
         public Subscription Subscription { get; set; }
+
+
+
+
+
+
+
+
+
+
+
+
+        
     }
 }

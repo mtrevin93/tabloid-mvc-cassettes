@@ -11,5 +11,7 @@ namespace TabloidMVC.Repositories
         void AddSubscription(Subscription subscription);
         void Unsubscribe(int id);
         Subscription GetSubscriptionById(int currentUserId, int authorId);
+
+        List<Subscription> GetActiveSubscriptions(int currentUser);
     }
 }
