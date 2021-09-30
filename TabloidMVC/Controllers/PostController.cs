@@ -7,6 +7,8 @@ using TabloidMVC.Models.ViewModels;
 using TabloidMVC.Repositories;
 using TabloidMVC.Models;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace TabloidMVC.Controllers
 {
@@ -18,13 +20,18 @@ namespace TabloidMVC.Controllers
         private readonly IReactionRepository _reactionRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IPostTagRepository _postTagRepository;
+        private readonly ISubscriptionRepository _subscriptionRepository;
+
+        
         public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, 
-        ICommentRepository commentRepository, IPostTagRepository postTagRepository, IReactionRepository reactionRepository)
+        ICommentRepository commentRepository, IPostTagRepository postTagRepository, IReactionRepository reactionRepository,
+        ISubscriptionRepository subscriptionRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
             _commentRepository = commentRepository;
             _postTagRepository = postTagRepository;
+            _subscriptionRepository = subscriptionRepository;
             _reactionRepository = reactionRepository;
         }
 
@@ -54,6 +61,7 @@ namespace TabloidMVC.Controllers
         {
             int userId = GetCurrentUserProfileId();
             
+            
             //Gets published or unpublished post by user
             var post = _postRepository.GetPublishedPostById(id);
             if (post == null)
@@ -64,6 +72,10 @@ namespace TabloidMVC.Controllers
                     return NotFound();
                 }
             }
+
+            List<Subscription> subscriptions = _subscriptionRepository.GetActiveSubscriptions(userId);
+
+            var subscription = subscriptions.FirstOrDefault(s => s.ProviderUserProfileId == post.UserProfileId);
             //Use postdetails view model to pass current user id
 
             PostDetailsViewModel vm = new PostDetailsViewModel {
@@ -71,8 +83,9 @@ namespace TabloidMVC.Controllers
                 CurrentUserId = userId,
                 PostId = id,
                 Category = _categoryRepository.GetCategoryById(post.CategoryId),
+                PostTag = _postTagRepository.GetAllPostTags(id),
+                Subscription = subscription,
                 Reactions = _reactionRepository.Get(),
-                PostTag = _postTagRepository.GetAllPostTags(id)
             };
 
             foreach(var reaction in vm.Reactions)
@@ -152,6 +165,37 @@ namespace TabloidMVC.Controllers
                 return View(postDetailsViewModel);
             }
         }
+
+
+        public ActionResult Subscribe(int postId)
+        {
+            int subscriber = GetCurrentUserProfileId();
+            Post post = _postRepository.GetPublishedPostById(postId);
+            try
+            {
+                Subscription subscription = new Subscription
+                {
+                    ProviderUserProfileId = post.UserProfileId,
+                    SubscriberUserProfileId = subscriber,
+                    BeginDateTime = DateTime.Now
+                };
+                _subscriptionRepository.AddSubscription(subscription);
+                return RedirectToAction("Details", new { id = post.Id });
+            }
+            catch
+            {
+                return RedirectToAction("Index");
+            }
+        }
+
+        public ActionResult Unsubscribe(int subscriptionId, int postId)
+        {
+            
+
+            _subscriptionRepository.Unsubscribe(subscriptionId);
+            return RedirectToAction("Details", new { id = postId });
+        }
+
 
         private int GetCurrentUserProfileId()
         {
