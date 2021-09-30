@@ -148,24 +148,35 @@ namespace TabloidMVC.Controllers
         }
 
 
-        public ActionResult Subscribe(int postUserId)
+        public ActionResult Subscribe(PostDetailsViewModel pd)
         {
             int subscriber = GetCurrentUserProfileId();
+            Post post = _postRepository.GetPublishedPostById(pd.PostId);
             try
             {
                 Subscription subscription = new Subscription
                 {
-                    ProviderUserProfileId = postUserId,
+                    ProviderUserProfileId = post.UserProfileId,
                     SubscriberUserProfileId = subscriber,
                     BeginDateTime = DateTime.Now
                 };
                 _subscriptionRepository.AddSubscription(subscription);
-                return RedirectToAction("Details", "Post", new { id = postUserId });
+                return RedirectToAction("Details", new { id = post.Id });
             }
             catch
             {
-                return View("Index", "Home");
+                return RedirectToAction("Index");
             }
+        }
+
+        public ActionResult Unsubscribe(PostDetailsViewModel pd)
+        {
+            int subscriber = GetCurrentUserProfileId();
+            Post post = _postRepository.GetPublishedPostById(pd.PostId);
+
+            Subscription subscription = _subscriptionRepository.GetSubscriptionById(subscriber, post.UserProfileId);
+            _subscriptionRepository.Unsubscribe(subscription.Id);
+            return RedirectToAction("Details", new { id = post.Id });
         }
 
 

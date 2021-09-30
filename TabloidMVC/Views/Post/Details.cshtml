@@ -68,11 +68,12 @@
             <p class="col-sm-12 mt-5">@Html.DisplayFor(model => model.Post.Content)</p>
         </section>
     </div>
-    <a asp-action="Index">Back to List</a>
-    <a asp-action="Subscribe" asp-route-id="@Model.Post.UserProfileId" asp-for
-       class="btn btn-outline-primary mx-1" title="Create" onclick="return confirm(`Are you sure you want to subscribe?`);">
-        Subscribe
-    </a>
-
+    <a asp-action="Index">Back to List</a> |
+    @if(Model.CurrentUserId != Model.Post.UserProfileId)
+    {
+        if(Model.Subscription.EndDateTime is Null)
+        @Html.ActionLink("Subscribe", "Subscribe", Model, null) 
+        @Html.ActionLink("Unsubscribe", "Unsubscribe", Model);
+    }
 </div>
 
