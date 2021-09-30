@@ -156,10 +156,10 @@ namespace TabloidMVC.Controllers
         }
 
 
-        public ActionResult Subscribe(PostDetailsViewModel pd)
+        public ActionResult Subscribe(int postId)
         {
             int subscriber = GetCurrentUserProfileId();
-            Post post = _postRepository.GetPublishedPostById(pd.PostId);
+            Post post = _postRepository.GetPublishedPostById(postId);
             try
             {
                 Subscription subscription = new Subscription
@@ -180,9 +180,7 @@ namespace TabloidMVC.Controllers
         public ActionResult Unsubscribe(int subscriptionId, int postId)
         {
             int subscriber = GetCurrentUserProfileId();
-/*            Post post = _postRepository.GetPublishedPostById(pd.PostId);
 
-            Subscription subscription = _subscriptionRepository.GetSubscriptionById(subscriber, post.UserProfileId);*/
             _subscriptionRepository.Unsubscribe(subscriptionId);
             return RedirectToAction("Details", new { id = postId });
         }
