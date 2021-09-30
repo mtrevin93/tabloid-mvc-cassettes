@@ -17,17 +17,22 @@ namespace TabloidMVC.Controllers
     {
         private readonly IPostRepository _postRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IReactionRepository _reactionRepository;
         private readonly ICommentRepository _commentRepository;
         private readonly IPostTagRepository _postTagRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
 
-        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, ICommentRepository commentRepository, IPostTagRepository postTagRepository, ISubscriptionRepository subscriptionRepository)
+        
+        public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, 
+        ICommentRepository commentRepository, IPostTagRepository postTagRepository, IReactionRepository reactionRepository,
+        ISubscriptionRepository subscriptionRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
             _commentRepository = commentRepository;
             _postTagRepository = postTagRepository;
             _subscriptionRepository = subscriptionRepository;
+            _reactionRepository = reactionRepository;
         }
 
         public IActionResult Index()
@@ -73,14 +78,20 @@ namespace TabloidMVC.Controllers
             var subscription = subscriptions.FirstOrDefault(s => s.ProviderUserProfileId == post.UserProfileId);
             //Use postdetails view model to pass current user id
 
-            PostDetailsViewModel vm = new PostDetailsViewModel { 
-                Post = post, 
+            PostDetailsViewModel vm = new PostDetailsViewModel {
+                Post = post,
                 CurrentUserId = userId,
                 PostId = id,
                 Category = _categoryRepository.GetCategoryById(post.CategoryId),
                 PostTag = _postTagRepository.GetAllPostTags(id),
                 Subscription = subscription
+                Reactions = _reactionRepository.Get(),
             };
+
+            foreach(var reaction in vm.Reactions)
+            {
+                reaction.TimesUsed = _reactionRepository.GetTimesUsed(id, reaction.Id);
+            }
 
             return View(vm);
         }

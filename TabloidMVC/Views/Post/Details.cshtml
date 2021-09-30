@@ -28,10 +28,6 @@
             </div>
             @*Create Comment Form*@
             <div class="row">
-                <a asp-controller="Comment" asp-action="Create" asp-route-postId="@Model.PostId"
-                   class="btn btn-outline-primary mx-1" title="Comment">
-                    <i class="fas fa-comment"></i>
-                </a>
                 <a asp-controller="Comment" asp-action="Index" asp-route-postId="@Model.PostId"
                    class="btn btn-outline-primary mx-1" title="Comment">
                     <i class="fas fa-comments"></i>
