@@ -7,10 +7,10 @@ SET IDENTITY_INSERT [UserType] OFF
 
 
 SET IDENTITY_INSERT [Category] ON
-INSERT INTO [Category] ([Id], [Name]) 
-VALUES (1, 'Technology'), (2, 'Close Magic'), (3, 'Politics'), (4, 'Science'), (5, 'Improv'), 
-	   (6, 'Cthulhu Sightings'), (7, 'History'), (8, 'Home and Garden'), (9, 'Entertainment'), 
-	   (10, 'Cooking'), (11, 'Music'), (12, 'Movies'), (13, 'Regrets');
+INSERT INTO [Category] ([Id], [Name], [IsDeleted]) 
+VALUES (1, 'Technology', 0), (2, 'Close Magic', 0), (3, 'Politics', 0), (4, 'Science', 0), (5, 'Improv', 0), 
+	   (6, 'Cthulhu Sightings', 0), (7, 'History', 0), (8, 'Home and Garden', 0), (9, 'Entertainment', 0), 
+	   (10, 'Cooking', 0), (11, 'Music', 0), (12, 'Movies', 0), (13, 'Regrets', 0);
 SET IDENTITY_INSERT [Category] OFF
 
 
