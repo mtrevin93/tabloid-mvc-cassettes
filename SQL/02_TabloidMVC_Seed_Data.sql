@@ -33,3 +33,12 @@ VALUES (
 'There are those' + char(10) + 'who do not believe' + char(10) + 'C# is the best.' + char(10) + 'They are wrong.',
     'https://gizmodiva.com/wp-content/uploads/2017/10/SCOTT-A-WOODWARD_1SW1943-1170x689.jpg',SYSDATETIME(), SYSDATETIME(), 1, 1, 1);
 SET IDENTITY_INSERT [Post] OFF
+
+SET IDENTITY_INSERT [Reaction] ON
+INSERT INTO [Reaction] ([Id],[Name],[ImageLocation])
+Values (1,'EggDance', 'https://emoji.slack-edge.com/T03F2SDTJ/egg-dance/bf79c1ac7be25851.gif'), 
+( 2 , 'Theater', 'https://slack-imgs.com/?c=1&o1=gu&url=https%3A%2F%2Fa.slack-edge.com%2Fproduction-standard-emoji-assets%2F13.0%2Fgoogle-small%2F1f3ad%402x.png'), 
+( 3 , 'Joy', 'https://a.slack-edge.com/production-standard-emoji-assets/13.0/google-small/1f602@2x.png'),
+( 4 , 'PizzaSpin', 'https://emoji.slack-edge.com/T03F2SDTJ/pizzaspin/f536c60be15e719c.gif'),
+( 5 , 'BabyYoda', 'https://emoji.slack-edge.com/T03F2SDTJ/baby_yoda_soup/730ab14e55635afd.gif');
+SET IDENTITY_INSERT [Reaction] OFF
