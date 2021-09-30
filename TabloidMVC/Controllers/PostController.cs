@@ -84,7 +84,7 @@ namespace TabloidMVC.Controllers
                 PostId = id,
                 Category = _categoryRepository.GetCategoryById(post.CategoryId),
                 PostTag = _postTagRepository.GetAllPostTags(id),
-                Subscription = subscription
+                Subscription = subscription,
                 Reactions = _reactionRepository.Get(),
             };
 
