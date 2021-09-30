@@ -92,17 +92,17 @@ namespace TabloidMVC.Controllers
         [HttpPost]
         public IActionResult Edit(Comment comment)
         {
-            //try
-            //{
+            try
+            {
                 _commentRepository.Edit(comment);
 
                 return RedirectToAction("Details", new { id = comment.Id });
-            //}
-            //catch (Exception ex)
-            //{
-            //    return View(comment);
-            //}
         }
+            catch (Exception ex)
+            {
+                return View(comment);
+    }
+}
 
         private int GetCurrentUserProfileId()
         {
