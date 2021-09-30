@@ -55,7 +55,8 @@ CREATE TABLE [Subscription] (
 
 CREATE TABLE [Category] (
   [Id] integer PRIMARY KEY IDENTITY,
-  [Name] nvarchar(50) NOT NULL
+  [Name] nvarchar(50) NOT NULL,
+  [IsDeleted] integer NOT NULL
 )
 
 CREATE TABLE [Post] (
@@ -115,4 +116,39 @@ CREATE TABLE [PostReaction] (
   CONSTRAINT [FK_PostReaction_Reaction] FOREIGN KEY ([ReactionId]) REFERENCES [Reaction] ([Id]),
   CONSTRAINT [FK_PostReaction_UserProfile] FOREIGN KEY ([UserProfileId]) REFERENCES [UserProfile] ([Id])
 )
+GO
+
+ALTER TABLE PostTag
+DROP CONSTRAINT FK_PostTag_Tag
+ALTER TABLE PostTag
+ADD CONSTRAINT FK_PostTag_Tag
+FOREIGN KEY (TagId)
+REFERENCES Tag(Id)
+ON DELETE CASCADE;
+
+ALTER TABLE PostTag
+DROP CONSTRAINT FK_PostTag_Post
+ALTER TABLE PostTag
+ADD CONSTRAINT FK_PostTag_Post
+FOREIGN KEY (PostId)
+REFERENCES Post(Id)
+ON DELETE CASCADE;
+
+ALTER TABLE Comment
+DROP CONSTRAINT FK_Comment_Post
+ALTER TABLE Comment
+ADD CONSTRAINT FK_Comment_Post
+FOREIGN KEY (PostId)
+REFERENCES Post(Id)
+ON DELETE CASCADE;
+
+ALTER TABLE PostReaction
+DROP CONSTRAINT FK_PostReaction_Post
+ALTER TABLE PostReaction
+ADD CONSTRAINT FK_PostReaction_Post
+FOREIGN KEY (PostId)
+REFERENCES Post(Id)
+ON DELETE CASCADE;
+
+
 GO
