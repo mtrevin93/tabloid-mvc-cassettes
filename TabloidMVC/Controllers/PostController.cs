@@ -179,7 +179,7 @@ namespace TabloidMVC.Controllers
 
         public ActionResult Unsubscribe(int subscriptionId, int postId)
         {
-            int subscriber = GetCurrentUserProfileId();
+            
 
             _subscriptionRepository.Unsubscribe(subscriptionId);
             return RedirectToAction("Details", new { id = postId });
