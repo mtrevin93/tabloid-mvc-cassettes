@@ -12,15 +12,15 @@
                 <h1 class="text-black-50">@Model.Post.Category.Name</h1>
             </div>
             <div class="row">
-                    <h4>Tag(s): </h4>
-                    <ul>
-                        @foreach (PostTag postTag in Model.PostTag)
-                        {
+                <h4>Tag(s): </h4>
+                <ul>
+                    @foreach (PostTag postTag in Model.PostTag)
+                    {
 
-                            <li> @Html.DisplayFor(modelItem => postTag.Tag.Name) </li>
+                        <li> @Html.DisplayFor(modelItem => postTag.Tag.Name) </li>
 
-                        }
-                    </ul>
+                    }
+                </ul>
             </div>
             <div class="row justify-content-between">
                 <p class="text-secondary">Written by @Model.Post.UserProfile.DisplayName</p>
@@ -36,6 +36,17 @@
                class="btn btn-outline-primary mx-1" title="Comment">
                 <i class="fas fa-comments"></i>
             </a>
+            <section class="px-3 align-content-end">
+                <div class="col justify-content-between align-content-end">
+                    @foreach (var item in Model.Reactions)
+                    {
+                        <a asp-action="Create" asp-controller="Reaction" asp-route-postId="@Model.Post.Id" asp-route-reactionId="@item.Id" class="btn btn-outline-primary mx-1" title="@item.Name">
+                            <img src="@item.ImageLocation" height="18" width="16" />
+                            <p style="position:absolute" height="4" , width="4">@item.TimesUsed</p>
+                        </a>
+                    }
+                </div>
+            </section>
             @*Check for whether user has delete permissions(post was made by current user)*@
             @if (Model.Post.UserProfileId == Model.CurrentUserId)
             {
@@ -69,4 +80,4 @@
         </section>
     </div>
     <a asp-action="Index">Back to List</a>
-    </div>
+</div>
