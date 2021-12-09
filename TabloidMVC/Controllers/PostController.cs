@@ -21,11 +21,12 @@ namespace TabloidMVC.Controllers
         private readonly ICommentRepository _commentRepository;
         private readonly IPostTagRepository _postTagRepository;
         private readonly ISubscriptionRepository _subscriptionRepository;
+        private readonly IUserProfileRepository _userProfileRepository;
 
         
         public PostController(IPostRepository postRepository, ICategoryRepository categoryRepository, 
         ICommentRepository commentRepository, IPostTagRepository postTagRepository, IReactionRepository reactionRepository,
-        ISubscriptionRepository subscriptionRepository)
+        ISubscriptionRepository subscriptionRepository, IUserProfileRepository userProfileRepository)
         {
             _postRepository = postRepository;
             _categoryRepository = categoryRepository;
@@ -33,6 +34,7 @@ namespace TabloidMVC.Controllers
             _postTagRepository = postTagRepository;
             _subscriptionRepository = subscriptionRepository;
             _reactionRepository = reactionRepository;
+            _userProfileRepository = userProfileRepository;
         }
 
         public IActionResult Index()
@@ -53,6 +55,18 @@ namespace TabloidMVC.Controllers
             var myPosts = _postRepository.GetMyPosts(userId);
 
             var vm = new PostListViewModel() { Posts = myPosts, UserId = userId };
+
+            return View(vm);
+        }
+
+        public IActionResult MySubscribedPosts()
+        {
+            int userId = GetCurrentUserProfileId();
+            UserProfile user = _userProfileRepository.GetUserProfileById(userId);
+
+            var myPosts = _postRepository.GetSubscribedPosts(userId);
+
+            var vm = new SubscribedPostListViewModel() { Posts = myPosts, User = user };
 
             return View(vm);
         }

@@ -95,6 +95,7 @@ namespace TabloidMVC.Repositories
 
         public List<Post> GetSubscribedPosts(int userId)
         {
+            List<Post> posts = new List<Post>();
             using (var conn = Connection)
             {
                 conn.Open();
@@ -118,8 +119,16 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Subscription s ON s.SubscriberUserProfileId = u.Id
                         WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND p.UserProfileId = @userId AND s.EndDateTime IS NULL
                         ORDER BY p.PublishDateTime DESC";
-                }
 
+                    cmd.Parameters.AddWithValue("@userId", userId);
+                    var reader = cmd.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        posts.Add(NewPostFromReader(reader));
+                    }
+                    reader.Close();
+                    return posts;
+                }
             }
         }
 
