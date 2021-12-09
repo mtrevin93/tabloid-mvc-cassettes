@@ -1,29 +1,37 @@
-﻿@model IEnumerable<TabloidMVC.Models.ViewModels.SubscribedPostListViewModel>
+﻿@model TabloidMVC.Models.ViewModels.SubscribedPostListViewModel
 
 @{
-    ViewData["Title"] = "MySubscribedPosts";
+    ViewData["Title"] = "Index";
 }
 
-<h1>MySubscribedPosts</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="container pt-5">
+    <h1>Welcome, @Model.User.DisplayName</h1>
+
+    <table class="table table-striped">
+        <tbody>
+            @foreach (var item in Model.Posts)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Title)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.UserProfile.DisplayName)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.Category.Name)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.PublishDateTime)
+                    </td>
+                    <td>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline-primary mx-1" title="View">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
