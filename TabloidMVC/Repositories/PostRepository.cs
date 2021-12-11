@@ -106,7 +106,7 @@ namespace TabloidMVC.Repositories
                               p.ImageLocation AS HeaderImage,
                               p.CreateDateTime, p.PublishDateTime, p.IsApproved,
                               p.CategoryId, p.UserProfileId,
-                              s.BeginDateTime, s.EndDateTime
+                              s.BeginDateTime, s.EndDateTime, s.SubscriberUserProfileId AS SubscriberUserProfileId,
                               c.[Name] AS CategoryName,
                               u.FirstName, u.LastName, u.DisplayName, 
                               u.Email, u.CreateDateTime, u.ImageLocation AS AvatarImage,
@@ -116,8 +116,8 @@ namespace TabloidMVC.Repositories
                               LEFT JOIN Category c ON p.CategoryId = c.id
                               LEFT JOIN UserProfile u ON p.UserProfileId = u.id
                               LEFT JOIN UserType ut ON u.UserTypeId = ut.id
-                              LEFT JOIN Subscription s ON s.SubscriberUserProfileId = u.Id
-                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND p.UserProfileId = @userId AND s.EndDateTime IS NULL
+                              LEFT JOIN Subscription s ON s.ProviderUserProfileId = u.Id
+                        WHERE IsApproved = 1 AND PublishDateTime < SYSDATETIME() AND s.SubscriberUserProfileId = @userId AND s.EndDateTime IS NULL AND s.BeginDateTime IS NOT NULL
                         ORDER BY p.PublishDateTime DESC";
 
                     cmd.Parameters.AddWithValue("@userId", userId);
