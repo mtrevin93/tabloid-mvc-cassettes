@@ -20,7 +20,7 @@ namespace TabloidMVC.Controllers
 
         public IActionResult Index()
         {
-            return View();
+            return RedirectToAction("MySubscribedPosts", "Post");
         }
 
         public IActionResult Privacy()
